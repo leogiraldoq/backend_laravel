@@ -203,7 +203,7 @@ Route::group([
         Route::post('/create',[PreBillingControler::class,'create']);
 });
 
-//Processing
+//Processing manufacturing
 Route::group([
         'middleware' => 'api',
         'prefix' => 'processing'        
