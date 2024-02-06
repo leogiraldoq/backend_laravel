@@ -15,7 +15,7 @@ use App\Http\Controllers\ShippersController;
 use App\Http\Controllers\BoxesController;
 use App\Http\Controllers\QrCodesController;
 use App\Http\Controllers\PreBillingControler;
-use \App\Http\Controllers\ProcessingController;
+use App\Http\Controllers\ProcessingController;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
@@ -30,14 +30,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    echo "Backend Api Blue Star Packing";
-});
-
 Route::get('/hashing/{text}',function($text){
     echo Hash::make($text);
 });
 
+Route::get('/printers',[PrintersController::class, 'listNewtwork']);
 //Auth
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::group([
