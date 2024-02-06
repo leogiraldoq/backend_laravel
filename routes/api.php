@@ -34,7 +34,6 @@ Route::get('/hashing/{text}',function($text){
     echo Hash::make($text);
 });
 
-Route::get('/printers',[PrintersController::class, 'listNewtwork']);
 //Auth
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::group([
