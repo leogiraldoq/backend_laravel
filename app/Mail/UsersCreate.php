@@ -22,7 +22,7 @@ class UsersCreate extends Mailable
         $this->name= $name;
         $this->username = $username;
         $this->password = $password;
-        $this->url = "https://laravel.com/docs/10.x/mail";
+        $this->url = "https://bluestarpacking.online";
     }
 
     /**
@@ -31,7 +31,7 @@ class UsersCreate extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Welcome to Blue Star Packing Admin'
+            subject: 'Welcome to Blue Star Packing App'
         );
     }
 

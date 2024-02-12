@@ -1,6 +1,6 @@
 <x-mail::message>
 # Welcome to Blue Star Packing Admin
-
+<img src="https://bluestarpacking.online//layout/images/logoBlueStarPacking.png" style="height: 149px;"/>
 Dear {{$name}}
 
 We create a user for you in our administrator platform, next you have your data access
