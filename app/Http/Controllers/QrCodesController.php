@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Traits\ResponseTrait;
 use App\Interfaces\ReceiveDetailsRepositoryInterface;
+use App\Interfaces\EmployeesRepositoryInterface;
 
 class QrCodesController extends Controller
 {
@@ -12,10 +13,12 @@ class QrCodesController extends Controller
     use ResponseTrait;
     
     private ReceiveDetailsRepositoryInterface $receiveDetailsRepository;
+    private EmployeesRepositoryInterface $employeeRepository;
     
     
-    public function __construct(ReceiveDetailsRepositoryInterface $receiveDetailsRepository) {
+    public function __construct(ReceiveDetailsRepositoryInterface $receiveDetailsRepository, EmployeesRepositoryInterface $employeeRepository) {
         $this->receiveDetailsRepository = $receiveDetailsRepository;
+        $this->employeeRepository = $employeeRepository;
     }
     
     /**
@@ -44,6 +47,8 @@ class QrCodesController extends Controller
     public function readQrProcessing($code){
         try{
             $qrInfo = $this->receiveDetailsRepository->showQrProcessing($code);
+            $employee = $this->employeeRepository->query(auth()->user()->employee_id);
+            $qrInfo['whoami'] = $employee['names']." ".$employee['last_names'];
             return $this->responseOk("Qr readed processing", $qrInfo);
         } catch (\Exception $ex) {
             $this->responseError($ex->getMessage());
