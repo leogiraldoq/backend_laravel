@@ -110,4 +110,49 @@ class UsersController extends Controller
             return $this->responseError($e->getMessage());
         }
     }
+    
+    /**
+     * Update new password
+     * @param Request $request Object passwordA and passwordRe
+     * @return \Illuminate\Http\JsonResponse
+     * @author LeoGiraldoQ
+     * @method POST
+     */
+    public function changePassword(Request $request){
+        try{
+            $changePassword = $request->validate([
+                "passwordA" => "string|required|min:6",
+                "passwordRe" => "string|required|min:6",
+            ]);
+            if( $changePassword["passwordA"] !== $changePassword["passwordRe"]){
+                return $this->responseError("The passwords not match", 404);
+            }else{
+                $user = $this->userRepository->updateNewPassword(auth()->user()->id_user, $changePassword["passwordRe"]);
+                return $this->responseOk("The password has been change for the user ".$user['username']);
+            }
+        }catch(\Exception $e){
+            return $this->responseError($e->getMessage());
+        }
+    }
+    
+    /**
+     * Forgot password
+     * @param Request $request email
+     * @return \Illuminate\Http\JsonResponse
+     * @author LeoGiraldoQ
+     * @method POST
+     */
+    public function forgotPassword(Request $request){
+        try{
+            $validate = $request->validate([
+                "email" => "required|email",
+                "username" => "string|required|min:4",
+            ]);
+            $user = $this->userRepository->forgotPassword($validate['email'],$validate['username']);
+            return $this->responseOk("Thank you ".$user['employee']['names']." ".$user['employee']['last_names']." your password was restore, you receibe an email with intructions to accees");
+        }catch(\Exception $e){
+            return $this->responseError($e->getMessage());
+        } 
+    }
+    
 }

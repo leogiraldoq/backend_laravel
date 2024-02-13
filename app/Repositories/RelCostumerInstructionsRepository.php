@@ -26,7 +26,6 @@ class RelCostumerInstructionsRepository implements RelCostumerIntructionsReposit
     public function create($instructionsClient){
         $customerIns = RelCostumerInstruction::create([
             'costumer_id' => $instructionsClient['customerId'],
-            'title' => $instructionsClient['title'],
             'instructions' => json_encode($instructionsClient)
         ]);
         $relBoutiqueIns = $this->relBoutiqueInstructionRepository->create($customerIns['id'], $instructionsClient['boutiques']);

@@ -14,7 +14,6 @@ class RelCostumerInstruction extends Model
     protected $table = 'rel_costumer_instruction';
     protected $fillable = [
         'costumer_id',
-        'title',
         'instructions'
     ];
 

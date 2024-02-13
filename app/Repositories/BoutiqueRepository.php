@@ -84,10 +84,11 @@ class BoutiqueRepository implements BoutiqueRepositoryInterface{
             'relBoutiqueCustomerInstructions.relCustomerIntructions'
         ])->get()->toArray();
         $boutiquesResume = array();
-        $boutiquesResume['originalResult'] = $boutiquesIntructions;
         $boutiquesResume['resume'] = array();
+        $boutiquesResume['boutiques'] = array();
         foreach($boutiquesIntructions as $boutique){
             $boutiquesResume['customer'] = $boutique['costumer']['name'];
+            array_push($boutiquesResume['boutiques'],["id_boutique" => $boutique['id_boutique'], "name" => $boutique['name']]);    
             foreach($boutique['rel_boutique_customer_instructions'] as $instructions){
                 $orderData['id'] = $boutique['id_boutique'];
                 $orderData['name'] = $boutique['name'];
@@ -96,6 +97,7 @@ class BoutiqueRepository implements BoutiqueRepositoryInterface{
                 $orderData['instructions'] = $instructions['rel_customer_intructions']['instructions'];
                 $orderData['title'] = json_decode($instructions['rel_customer_intructions']['instructions'])->title;
                 $orderData['sampleImage'] = json_decode($instructions['rel_customer_intructions']['instructions'])->sampleImage;
+                $orderData['principal'] = $instructions['principal'];
                 array_push($boutiquesResume['resume'], $orderData);
             }
         }

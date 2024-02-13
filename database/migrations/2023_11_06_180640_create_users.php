@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('username')->unique()->require();
             $table->string('password')->unique();
             $table->boolean('active')->default(true);
-            $table->dateTime('last_loguin')->nullable();
+            $table->dateTimeTz('last_loguin')->nullable();
             $table->timestamps();
         });
     }

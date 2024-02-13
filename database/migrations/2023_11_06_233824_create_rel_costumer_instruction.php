@@ -17,7 +17,7 @@ return new class extends Migration
             //Foreign key costumers table
             $table->bigInteger('costumer_id')->unsigned()->index();
             $table->foreign('costumer_id')->references('id_costumer')->on('costumers');
-            
+
             //Object contains the instructions and image for example
             $table->json('instructions')->comments('Object whit the instrucctions to production and image example');
             

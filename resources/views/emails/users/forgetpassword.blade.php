@@ -1,11 +1,11 @@
 <x-mail::message>
 <img src="https://bluestarpacking.online//layout/images/logoBlueStarPacking.png" style="height: 149px;"/>
 
-# Welcome to Blue Star Packing App
+# Restore password Blue Star Packing App
 
 Dear {{$name}}
 
-We create a user for you in our administrator platform, next you have your data access
+We restore your password, please login to the app with this provisional password
 
 <ul>
     <li><b>Username:</b> {{$username}}</li>
@@ -16,6 +16,6 @@ We create a user for you in our administrator platform, next you have your data 
 Log in
 </x-mail::button>
 
-Thanks and remember you change your password at first login.<br>
+Thanks and you need to change your password at login.<br>
 Regards, Blue Star Packing Inc.
 </x-mail::message>

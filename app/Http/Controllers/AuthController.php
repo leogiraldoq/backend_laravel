@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
+use App\Interfaces\UsersRepositoryInterface;
 
 class AuthController extends Controller
 {
     use ResponseTrait;
+    private UsersRepositoryInterface $usersRepository;
     
-    public function __construct()
+    public function __construct(UsersRepositoryInterface $usersRepository)
     {
         $this->middleware('auth:api',['except' => ['login']]);
+        $this->usersRepository = $usersRepository;
     }
 
     /**
@@ -29,7 +32,16 @@ class AuthController extends Controller
             if(! $token = auth()->attempt($credentials)){
                 return $this->responseError('Please check your login information',401);
             }
-            return $this->responseWhitToken($token,auth()->factory()->getTTL() * 60);
+            if(auth()->user()->active){
+                $routeRedirect = "dashboard";
+                if(auth()->user()->last_loguin == null){
+                    $routeRedirect = "reset-password";
+                }
+                $this->usersRepository->updateLastLogin(auth()->user()->id_user);
+                return $this->responseWhitToken($token,auth()->factory()->getTTL() * 60,$routeRedirect);
+            }else{
+                return $this->responseError("The user ".$credentials['username']. " is inactive!",404);
+            }
         }catch(\Exception $e){
             return $this->responseError($e->getMessage());
         }
@@ -44,7 +56,7 @@ class AuthController extends Controller
     public function me()
     {
         try{
-            return $this->responseOk('User authenticated',auth()->user());
+            return $thi->responseOk('User authenticated',auth()->user());
         }catch(\Exception $e){
             return $this->responseError($e->getMessage());
         }   

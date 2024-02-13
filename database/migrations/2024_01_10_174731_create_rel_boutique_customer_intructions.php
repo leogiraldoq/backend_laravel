@@ -20,7 +20,7 @@ return new class extends Migration
             $table->bigInteger("rel_cus_ins_id")->unsigned()->index();
             $table->foreign("rel_cus_ins_id")->references("id")->on("rel_costumer_instruction");
             
-            $table->boolean("principal")->default(false);
+            $table->boolean("principal")->default(true);
             $table->timestamps();
         });
     }

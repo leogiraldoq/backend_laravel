@@ -3,11 +3,13 @@
 namespace App\Repositories;
 
 use App\Mail\UsersCreate;
+use App\Mail\UserForgotPassword;
 use Illuminate\Support\Facades\Mail;
 use App\Interfaces\UsersRepositoryInterface;
 use App\Models\Users;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class UsersRepository implements UsersRepositoryInterface
 {
@@ -84,5 +86,51 @@ class UsersRepository implements UsersRepositoryInterface
         return tap($user)->update([
             'active' => $changeStatusUser
         ]);
+    }
+    
+    /**
+     * Update Last Login
+     * @param $updateUser
+     * @return Model
+     * @author LeoGiraldoQ
+     */
+    public function updateLastLogin($idUser)
+    {        
+       $user = Users::where([
+            'id_user' => $idUser
+        ])->firstOrFail();
+        return tap($user)->update([
+            "last_loguin" => Carbon::now()->toDateTimeString()
+        ]);
+    }
+    
+    /**
+     * Update Last Login
+     * @param $updateUser
+     * @return Model
+     * @author LeoGiraldoQ
+    */
+    public function updateNewPassword($idUser,$password){
+        $user = Users::where([
+            'id_user' => $idUser
+        ])->firstOrFail();
+        return tap($user)->update([
+            "password" => Hash::make($password)
+        ]);
+    }
+    
+    public function forgotPassword($mailUser,$username){
+        $user = Users::where('username','=',$username)->whereHas('employee',function($query) use ($mailUser){
+            $query->where('email','=',$mailUser);
+        })->with(['employee'])->firstOrFail();
+
+        $provisionalPass = Str::random(8);
+        tap($user)->update([
+            "last_loguin" => null,
+            "password" => Hash::make($provisionalPass)
+        ]);   
+        $namesEmployee = $user['employee']['names']." ".$user['employee']['last_names'];
+        Mail::to($user['employee']['email'])->queue( new UserForgotPassword($namesEmployee,$user['username'],$provisionalPass));
+        return $user;
     }
 }

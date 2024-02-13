@@ -6,12 +6,13 @@
     trait ResponseTrait
     {
 
-        public function responseWhitToken($token,$expires)
+        public function responseWhitToken($token,$expires,$route)
         {
             return response()->json([
                 'access_token' => $token,
                 'token_type' => 'bearer',
-                'expires_in' => $expires
+                'expires_in' => $expires,
+                'route' => $route
             ]);
         }
 

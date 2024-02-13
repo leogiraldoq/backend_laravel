@@ -36,6 +36,7 @@ Route::get('/hashing/{text}',function($text){
 
 //Auth
 Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/forgot-password', [UsersController::class , 'forgotPassword']);
 Route::group([
     'middleware' => 'api',
     'prefix' => 'auth'
@@ -54,6 +55,7 @@ Route::group([
         Route::post('/create',[UsersController::class , 'create']);
         Route::post('/update',[UsersController::class , 'update']);
         Route::put('/change-status/{id}',[UsersController::class , 'changeStatus']);
+        Route::post('/reset-password',[UsersController::class , 'changePassword']);
 });
 
 //Employees
