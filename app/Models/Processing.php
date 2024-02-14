@@ -17,6 +17,7 @@ class Processing extends Model
         "style_number",
         "style_color",
         "style_total",
+        "work_share",
         "user_id"
     ];
     

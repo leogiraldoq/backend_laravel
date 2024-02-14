@@ -6,13 +6,19 @@ use App\Interfaces\ReceiveDetailsRepositoryInterface;
 use App\Models\ReceiveDetails;
 use Carbon\Carbon;
 use App\Interfaces\RelBoutiquesCustomerInstructionsRepositoryInterface;
+use App\Interfaces\ProcessingRepositoryInterface;
 
 class ReceiveDetailsRepository implements ReceiveDetailsRepositoryInterface{
     
     private RelBoutiquesCustomerInstructionsRepositoryInterface $relBoutiquyeIntructionsRepository;
+    private ProcessingRepositoryInterface $processingRepository;
     
-    public function __construct(RelBoutiquesCustomerInstructionsRepositoryInterface $relBoutiquyeIntructionsRepository) {
+    public function __construct(
+            RelBoutiquesCustomerInstructionsRepositoryInterface $relBoutiquyeIntructionsRepository,
+            ProcessingRepositoryInterface $processingRepository
+        ) {
         $this->relBoutiquyeIntructionsRepository = $relBoutiquyeIntructionsRepository;
+        $this->processingRepository = $processingRepository;
     }
     /**
      * Create details for receive boxes
@@ -90,7 +96,8 @@ class ReceiveDetailsRepository implements ReceiveDetailsRepositoryInterface{
             "receibed_by" => $names,
             "special_observations" => $receiveDetails[0]['receive']['observations'],
             "id_receive_details" => $receiveDetails[0]['id_receive_detail'],
-            "id_receibed_user_id" => $receiveDetails[0]['receive']['user_id']
+            "id_receibed_user_id" => $receiveDetails[0]['receive']['user_id'],
+            "instructions" => (sizeof($receiveDetails[0]['boutiques']['rel_boutique_customer_instructions']) > 0 ? sizeof($receiveDetails[0]['boutiques']['rel_boutique_customer_instructions']) : null),
         );
         return $result;
         
@@ -105,6 +112,10 @@ class ReceiveDetailsRepository implements ReceiveDetailsRepositoryInterface{
     public function showQrProcessing($code){
         $receiveDetails = $this->show(base64_decode($code));
         $instructions = $this->relBoutiquyeIntructionsRepository->bringInstructiosPerBoutique($receiveDetails[0]['boutiques']['id_boutique']);
+        $processing = null;
+        if($receiveDetails[0]['pre_billing'] !== null){
+            $processing = $this->processingRepository->showPreBillingId($receiveDetails[0]['pre_billing']['id_pre_bill']);
+        }
         $result = array(
             "customer" => $receiveDetails[0]['receive']['customer']['name'],
             "boutique" => $receiveDetails[0]['boutiques']['name'],
@@ -112,7 +123,9 @@ class ReceiveDetailsRepository implements ReceiveDetailsRepositoryInterface{
             "invoiceNum" => ($receiveDetails[0]['pre_billing'] !== null ? $receiveDetails[0]['pre_billing']['invoice_number'] : null),
             "total" => ($receiveDetails[0]['pre_billing'] !== null ? $receiveDetails[0]['pre_billing']['total_pieces'] : null),
             "instructions" => (sizeof($instructions) > 0 ? json_decode($instructions[0]["rel_customer_intructions"]['instructions']) : null),
-            "preBillId" => $receiveDetails[0]['pre_billing']['id_pre_bill']
+            "preBillId" => ($receiveDetails[0]['pre_billing'] !== null ? $receiveDetails[0]['pre_billing']['id_pre_bill'] : null),
+            "preBillQnty" => ($receiveDetails[0]['pre_billing'] !== null ? $receiveDetails[0]['pre_billing']['quantity_styles'] : null),
+            "processing" => $processing
         );
         return $result;
     }
@@ -144,6 +157,7 @@ class ReceiveDetailsRepository implements ReceiveDetailsRepositoryInterface{
     public function show($id){
         return ReceiveDetails::with([
             'boutiques',
+            'boutiques.relBoutiqueCustomerInstructions',
             'boxes',
             'receive',
             'receive.shipper',

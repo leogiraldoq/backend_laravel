@@ -37,23 +37,15 @@ class ProcessingController extends Controller
                 "shareWork" => "required|boolean",
                 "stylesProcess" => "required|array|min:1",
                 "stylesProcess.*.id" => "required|string",
-                "stylesProcess.*.color" => "required_if:shareWork,==,true|nullable|string",
+                "stylesProcess.*.color" => "required_if:shareWork,==,true|nullable|array",
                 "stylesProcess.*.quantity" => "required|integer",
             ]);
-            $totalQuantity = $this->preBillRepository->totalPiecesInvoice($processValidate["preBillId"]);
-            $totalProcess = 0;
-            foreach($processValidate['stylesProcess'] as $style){
-                $totalProcess += $style['quantity'];
+            $userId = (auth()->user())->id_user;
+            $processCreate = $this->processingRepository->create($processValidate, $userId);
+            if($processCreate['error']){
+                return $this->responseError($processCreate['message'], $processCreate['code']);
             }
-            if($totalQuantity < $totalProcess){
-                return $this->responseError("The total pieces that you process its <b>MAYOR</b> that the pieces in the invoice, you enter <b>".$totalProcess."</b> pieces and the invoice said <b>".$totalQuantity."</b> pieces in total. Check the information or contact the manager.", 422);
-            }elseif($totalQuantity > $totalProcess){
-                return $this->responseError("The total pieces that you process its <b>MENOR</b> that the pieces in the invoice, you enter <b>".$totalProcess."</b> pieces and the invoice said <b>".$totalQuantity."</b> pieces in total. Check the information or contact the manager.", 422);
-            }else{
-                $userId = (auth()->user())->id_user;
-                $processCreate = $this->processingRepository->create($processValidate, $userId);
-                return $this->responseOk("Data saved", $processCreate);
-            }
+            return $this->responseOk("Data saved", $processCreate);
         } catch (\Exception $exc) {
             return $this->responseError($exc->getMessage());
         }
