@@ -30,7 +30,7 @@ class BoxesController extends Controller
     public function create(Request $request){
         try {
             $dataBoxValidate = $request->validate([
-                'describe' => 'required|string|min:3|max:20',
+                'describe' => 'required|string|min:1|max:20',
                 'dimensions' => 'required|string|min:2|max:10',
             ]);
             $box = $this->boxRepository->create($dataBoxValidate);
