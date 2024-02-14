@@ -134,7 +134,7 @@ class ReceiveController extends Controller
                 if($boutiqueInstructions){
                     $process = json_decode($boutiqueInstructions[0]['rel_customer_intructions']['instructions'])->{'packing'};
                 }else{
-                    $process = "Not provide";
+                    $process = "Instructions no created";
                 }
                 $qrBase64 = base64_encode(\QrCode::format('png')->size(200)->errorCorrection('H')->generate(base64_encode($details['id_receive_detail'])));
                 for($q=0 ; $q < $details['quantity_box'] ; $q++){
@@ -146,6 +146,7 @@ class ReceiveController extends Controller
                     $stickerData['shipping'] = strtoupper("TO: ".$process);
                     $stickerData['stickerNumber'] = "BOX: ".($q+1)." of ".$details['quantity_box'];
                     $stickerData['qr'] = $qrBase64;
+                    $stickerData['box'] = strtoupper($details['boxes']['describe']);
                     array_push($sendToView,$stickerData);
                 }
             }
