@@ -162,6 +162,9 @@ Route::group([
         Route::get('/list-all',[ReceiveController::class,'queryAll']);
         Route::get('/details/list-all',[ReceiveController::class,'queryAllDetails']);
         Route::post('/upser/ticket',[ReceiveController::class, 'addTicketSupport']);
+        Route::get('/ticket/{idReceive}',[ReceiveController::class, 'getTicket']);
+        Route::get('/delete/{idB64REceive}/{followNumber}',[ReceiveController::class, 'delete']);
+        Route::get('/details/list-all',[ReceiveController::class,'queryAllDetails']);
 });
 
 //Shippers

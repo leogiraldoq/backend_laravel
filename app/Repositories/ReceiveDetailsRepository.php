@@ -144,8 +144,8 @@ class ReceiveDetailsRepository implements ReceiveDetailsRepositoryInterface{
             'receive.shipper',
             'receive.customer',
             'receive.user',
-            'receive.user.employee',
-        ])->get();
+            'receive.user.employee'
+        ])->orderBy('created_at', 'desc')->get();
     }
     
     /**

@@ -4,6 +4,8 @@ namespace App\Repositories;
 
 use App\Interfaces\ReceiveRepositoryInterface;
 use App\Models\Receive;
+use App\Models\ReceiveDetails;
+use App\Models\ReceiveSupports;
 use Carbon\Carbon;
 use App\Interfaces\ReceiveDetailsRepositoryInterface;
 
@@ -114,6 +116,17 @@ class ReceiveRepository implements ReceiveRepositoryInterface{
             'receive_details.boutiques',
             'receive_details.boxes'
         ])->get()->toArray();
+    }
+    
+    /**
+     * Delete receive
+     * @return Model
+     * @author LeoGiraldoQ
+     */
+    public function delete($idB64Receive){
+        $receiveDetails = ReceiveDetails::where('receive_id',base64_decode($idB64Receive))->delete();
+        $receiveSupports = ReceiveSupports::where('receive_id',base64_decode($idB64Receive))->delete();
+        return Receive::where('id_receive', base64_decode($idB64Receive))->delete();
     }
     
 }

@@ -90,6 +90,22 @@ class ReceiveController extends Controller
     }
     
     /**
+     * List receive details history
+     * @param Date $date Date for the condition query
+     * @return \Illuminate\Http\JsonResponse
+     * @author LeoGiraldoQ
+     * @method GET
+     */
+    public function queryDetailsAll(){
+        try {
+            $receiveDetails = $this->receiveDetailRepository->showAll();
+            return $this->responseOk("Receive details listed", $receiveDetails);
+        } catch (Exception $exc) {
+            return $this->responseError($exc->getMessage());
+        }
+    }
+    
+    /**
      * List all receive boxes
      * @return \Illuminate\Http\JsonResponse
      * @author LeoGiraldoQ
@@ -184,6 +200,37 @@ class ReceiveController extends Controller
             ]);
             $ticketSave = $this->receiveSupportRepository->upsertTicket($valReceibeSupport['receiveId'], $valReceibeSupport['ticket']);
             return $this->responseOk("Ticket created", $ticketSave);
+        } catch (Exception $exc) {
+            return $this->responseError($exc->getMessage());
+        }
+    }
+    
+    /**
+     * Bring ticket
+     * @param Request $idReceive
+     * @return \Illuminate\Http\JsonResponse
+     * @author LeoGiraldoQ
+     */
+    public function getTicket($idReceive){
+        try {
+            $ticket = $this->receiveRepository->index($idReceive);
+            return $this->responseOk("Ticket return", $ticket);
+        } catch (Exception $exc) {
+            return $this->responseError($exc->getMessage());
+        }
+    }
+    
+    /**
+     * Delete receive
+     * @param Request $idB64Receive id in Base64
+     * @return \Illuminate\Http\JsonResponse
+     * @author LeoGiraldoQ
+     */
+    public function delete($idB64receive,$followNumber){
+        try {
+            $deleteReceive = $this->receiveRepository->delete($idB64receive);
+            $receive = $this->receiveDetailRepository->showAll();
+            return $this->responseOk("The receive number <b>".$followNumber."</b> was delete.", $receive);
         } catch (Exception $exc) {
             return $this->responseError($exc->getMessage());
         }
