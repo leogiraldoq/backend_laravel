@@ -41,8 +41,8 @@
     <body>
         @foreach ($sendToView as $sticker)
             <table cellSpacing="0" cellPading="0">
-                <tr style="font-size: 30px;font-weight: bolder;">
-                    <th style="width:50%;">{{ $sticker['customer'] }}</th>
+                <tr style="font-size: 27px;font-weight: bolder;">
+                    <th style="width:55%;">{{ $sticker['customer'] }}</th>
                     <th>{{ $sticker['boutique'] }}</th>
                 </tr>
                 <tr>
@@ -55,7 +55,7 @@
                         <p style="font-size:25px;">{{ $sticker['received'] }}</p>
                         <p style="font-size:30px;font-weight: bolder;">{{ $sticker['store'] }}</p>
                         <p style="font-size:25px;">{{ $sticker['process'] }}</p>
-                        <p style="font-size:25px;">BOX: {{ $sticker['box'] }}</p>
+                        <p style="font-size:25px;">{{ $sticker['box'] }}</p>
                         <p class="backGroundBlack" style="font-size:25px;font-weight: bolder;">{{ $sticker['shipping'] }}</b>
                         <p style="font-size:30px;font-weight: bolder;">{{ $sticker['stickerNumber'] }}</p>
                     </td>

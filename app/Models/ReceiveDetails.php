@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ReceiveDetails extends Model
 {
@@ -35,5 +36,9 @@ class ReceiveDetails extends Model
     
     public function pre_billing():HasOne{
         return $this->hasOne(PreBilling::class,'receive_details_id');
+    }
+    
+    public function quality():HasMany{
+        return $this->hasMany(Quality::class,'receive_details_id');
     }
 }

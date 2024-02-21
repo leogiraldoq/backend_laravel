@@ -54,8 +54,9 @@ class ReceiveRepository implements ReceiveRepositoryInterface{
             'shipper',
             'receive_details',
             'receive_details.boutiques',
-            'receive_details.boxes'
-            ])->where('id_receive',$idReceive)->firstOrFail()->toArray();
+            'receive_details.boxes',
+            'receive_details.boxes.products'
+        ])->where('id_receive',$idReceive)->firstOrFail()->toArray();
     }
     
     /**

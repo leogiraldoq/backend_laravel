@@ -39,13 +39,15 @@ class ProcessingController extends Controller
                 "stylesProcess.*.id" => "required|string",
                 "stylesProcess.*.color" => "required_if:shareWork,==,true|nullable|array",
                 "stylesProcess.*.quantity" => "required|integer",
+                "stylesProcess.*.set" => "required|integer",
+                "workAdd" => "nullable|array"
             ]);
             $userId = (auth()->user())->id_user;
             $processCreate = $this->processingRepository->create($processValidate, $userId);
             if($processCreate['error']){
                 return $this->responseError($processCreate['message'], $processCreate['code']);
             }
-            return $this->responseOk("Data saved", $processCreate);
+            return $this->responseOk("The revision and data was saved you start ".Carbon::parse($receiveData['created_at'])->format('F d Y g:i:s a'), $processCreate);
         } catch (\Exception $exc) {
             return $this->responseError($exc->getMessage());
         }

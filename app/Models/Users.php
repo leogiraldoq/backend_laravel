@@ -46,9 +46,12 @@ class Users extends Authenticatable implements JWTSubject
     }
     
     public function processing():HasMany{
-        return $this->hasMany(Processing::class,"user_id");
+        return $this->hasMany(Processing::class,'user_id');
     }
     
+    public function quality():HasMany{
+        return $this->hasMany(Quality::class,'user_id');
+    }
     //JWT functions
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.

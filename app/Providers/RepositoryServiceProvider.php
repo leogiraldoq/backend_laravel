@@ -25,6 +25,9 @@ use App\Interfaces\CustomerNoProcessRepositoryInterface;
 use App\Interfaces\ReceiveSupportsRepositoryInterface;
 use App\Interfaces\PreBillingRepositoryInterface;
 use App\Interfaces\ProcessingRepositoryInterface;
+use App\Interfaces\ProcessAddWorkRepositoryInterface;
+use App\Interfaces\RelProcessAddWorkRepositoryInterface;
+use App\Interfaces\ProductsRepositoryInterface;
 
 use \App\Repositories\ProfilesRepository;
 use App\Repositories\RelCostumerInstructionsRepository;
@@ -49,6 +52,9 @@ use App\Repositories\CustomerNotProcessRepository;
 use App\Repositories\ReceiveSupportRepository;
 use App\Repositories\PreBillingRepository;
 use App\Repositories\ProcessingRepository;
+use App\Repositories\ProcessAddWorkRepository;
+use App\Repositories\RelProcessAddWorkRepository;
+use App\Repositories\ProductsRepository;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -82,6 +88,9 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ReceiveSupportsRepositoryInterface::class, ReceiveSupportRepository::class);
         $this->app->bind(PreBillingRepositoryInterface::class, PreBillingRepository::class);
         $this->app->bind(ProcessingRepositoryInterface::class, ProcessingRepository::class);
+        $this->app->bind(ProcessAddWorkRepositoryInterface::class, ProcessAddWorkRepository::class);
+        $this->app->bind(RelProcessAddWorkRepositoryInterface::class, RelProcessAddWorkRepository::class);
+        $this->app->bind(ProductsRepositoryInterface::class, ProductsRepository::class);
     }
 
     /**

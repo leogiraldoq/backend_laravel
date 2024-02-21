@@ -16,6 +16,8 @@ use App\Http\Controllers\BoxesController;
 use App\Http\Controllers\QrCodesController;
 use App\Http\Controllers\PreBillingControler;
 use App\Http\Controllers\ProcessingController;
+use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\QualityController;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
@@ -178,6 +180,17 @@ Route::group([
         Route::get('/verify/process-not/{idCustomer}/{idShipper}',[ShippersController::class,'processOrNot']);
 });
 
+//Products
+Route::group([
+        'middleware' => 'api',
+        'prefix' => 'products'    
+    ], function(){
+        Route::get('/list-all',[ProductsController::class, 'show']);
+        Route::post('/create',[ProductsController::class,'create']);
+        Route::get('/boxes/list',[ProductsController::class,'showWithBoxes']);
+        Route::get('/boxes',[ProductsController::class,'showBoxes']);
+});
+
 //Boxes
 Route::group([
         'middleware' => 'api',
@@ -194,6 +207,7 @@ Route::group([
     ],function(){
         Route::get('/pre-bill/show/info/{code}',[QrCodesController::class,'readQrPreBill']);
         Route::get('/processing/show/info/{code}',[QrCodesController::class,'readQrProcessing']);
+        Route::get('/quality/show/info/{code}',[QrCodesController::class,'readQrQuality']);
 });
 
 //PreBilling
@@ -211,3 +225,12 @@ Route::group([
     ],function(){
         Route::post('/create',[ProcessingController::class,'create']);
 });
+
+//Quality
+Route::group([
+        'middleware' => 'api',
+        'prefix' => 'quality'        
+    ],function(){
+        Route::post('/create',[QualityController::class,'create']);
+});
+

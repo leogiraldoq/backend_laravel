@@ -4,15 +4,21 @@ namespace App\Repositories;
 
 use App\Interfaces\ProcessingRepositoryInterface;
 use App\Interfaces\PreBillingRepositoryInterface;
+use App\Interfaces\RelProcessAddWorkRepositoryInterface;
 use \App\Models\Processing;
 
 class ProcessingRepository implements ProcessingRepositoryInterface
 {
     
     private PreBillingRepositoryInterface $preBillRepository;
+    private RelProcessAddWorkRepositoryInterface $relProcessAddWork;
     
-    public function __construct(PreBillingRepositoryInterface $preBillRepository) {
+    public function __construct(
+            PreBillingRepositoryInterface $preBillRepository,
+            RelProcessAddWorkRepositoryInterface $relProcessAddWork
+        ) {
         $this->preBillRepository = $preBillRepository;
+        $this->relProcessAddWork = $relProcessAddWork;
     }
     
     /**
@@ -28,15 +34,17 @@ class ProcessingRepository implements ProcessingRepositoryInterface
             return $validateProcess;
         }else{
             foreach($validateProcess['data']['stylesProcess'] as $process){
-                Processing::create([
+                $processingIds[] = Processing::create([
                     "pre_bill_id" => $validateProcess['data']['preBillId'],
                     "style_number" => $process['id'],
-                    "style_color" => $process['color']['name'],
+                    "style_color" => ($validateProcess['data']['shareWork'] ? $process['color']['name'] : null),
                     "style_total" => $process['quantity'],
+                    "set" => $process['set'],
                     "work_share" => $validateProcess['data']['shareWork'],
                     "user_id" => $userId
-                ]);
+                ])->id_process;
             }
+            $relProcess = $this->relProcessAddWork->create($processingIds, $processData['workAdd']);
             return [
                 "error" => false,
                 "data" => $this->showPreBillingId($processData['preBillId'])
@@ -54,7 +62,7 @@ class ProcessingRepository implements ProcessingRepositoryInterface
      * @author LeoGiraldoQ
      */
     public function showPreBillingId($preBillId){
-        return Processing::with(['pre_billing','users'])->where('pre_bill_id',$preBillId)->get()->toArray();
+        return Processing::with(['pre_billing','users','users.employee'])->where('pre_bill_id',$preBillId)->get()->toArray();
     }
     
     /**
@@ -101,5 +109,36 @@ class ProcessingRepository implements ProcessingRepositoryInterface
             ['work_share','=',true]
         ])->selectRaw('SUM(style_total) as totalQnty')->groupBy('pre_bill_id')->get()->toArray();
         return (sizeof($totalQnty) == 0 ? 0 : $totalQnty['totalQnty']);
+    }
+    
+    public function resumeProcessing($preBillId){
+        $processingResult = $this->showPreBillingId($preBillId);
+        $processinResume = array();
+        $processinResume['process'] = true;
+        $processinResume['resume'] = array();
+        $processinResume['total'] = 0;
+        $totalProcessing = 0;
+        $total = 0;
+        if(sizeof($processingResult) > 0){
+            foreach($processingResult as $process){
+                $totalProcessing = $totalProcessing + $process['style_total'];
+                array_push($processinResume['resume'],[
+                    "idProcess" => $process['id_process'],
+                    "styleId" => $process['style_number'],
+                    "styleColor" => ($process['style_color'] == null ? "N/A" : $process['style_color']),
+                    "stylePieces" => $process['style_total'],
+                    "styleSet" => $process['set'].' pieces',
+                    "workShare" => ($process['work_share'] ? "Share" : "No share"),
+                    "madeFor" => $process['users']['employee']['names'].' '.$process['users']['employee']['last_names'],
+                    "total" => ($process['style_total']*$process['set']),
+                    "q" => false
+                ]);
+                $processinResume['total'] = $processinResume['total'] + ($process['style_total']*$process['set']);
+            }
+            if($processingResult[0]['pre_billing']['total_pieces'] == $totalProcessing){
+                $processinResume['process'] = false;
+            }            
+        }
+        return $processinResume;
     }
 }

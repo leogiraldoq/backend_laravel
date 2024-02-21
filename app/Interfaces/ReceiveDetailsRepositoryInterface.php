@@ -9,4 +9,5 @@ interface ReceiveDetailsRepositoryInterface{
     public function showAll();
     public function showQrPreBill($code);
     public function showQrProcessing($code);
+    public function showQrQuality($code);
 }

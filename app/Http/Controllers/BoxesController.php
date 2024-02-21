@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Interfaces\BoxesRepositoryInterface;
+use App\Interfaces\ProductsRepositoryInterface;
 use App\Traits\ResponseTrait;
 
 
@@ -12,9 +13,14 @@ class BoxesController extends Controller
     use ResponseTrait;
     
     private BoxesRepositoryInterface $boxRepository;
+    private ProductsRepositoryInterface $productRepository;
     
-    public function __construct(\App\Interfaces\BoxesRepositoryInterface $boxRepository) {
+    public function __construct(
+            BoxesRepositoryInterface $boxRepository,
+            ProductsRepositoryInterface $productRepository
+    ) {
         $this->boxRepository = $boxRepository;
+        $this->productRepository = $productRepository;
     }
     
     
@@ -30,11 +36,12 @@ class BoxesController extends Controller
     public function create(Request $request){
         try {
             $dataBoxValidate = $request->validate([
-                'describe' => 'required|string|min:1|max:20',
+                'productId' => 'required|array',
                 'dimensions' => 'required|string|min:2|max:10',
             ]);
             $box = $this->boxRepository->create($dataBoxValidate);
-            return $this->responseOk("Box ".$box['describe']." created", $box);
+            $productBoxes = $this->productRepository->queryByBoxes();
+            return $this->responseOk("Box created", $productBoxes);
         } catch (Exception $exc) {
             return $this->responseError($exc->getMessage());
         }

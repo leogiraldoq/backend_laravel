@@ -151,18 +151,21 @@ class ReceiveController extends Controller
                     $process = json_decode($boutiqueInstructions[0]['rel_customer_intructions']['instructions'])->{'packing'};
                 }else{
                     $process = "Instructions no created";
-                }
-                $qrBase64 = base64_encode(\QrCode::format('png')->size(200)->errorCorrection('H')->generate(base64_encode($details['id_receive_detail'])));
+                } 
                 for($q=0 ; $q < $details['quantity_box'] ; $q++){
                     $stickerData['boutique'] = strtoupper($details['boutiques']['name']);
                     $stickerData['customer'] = strtoupper($receiveData['customer']['name']);
-                    $stickerData['received'] = strtoupper(Carbon::parse($receiveData['created_at'])->format('F d Y H:i:s'));
+                    $stickerData['received'] = strtoupper(Carbon::parse($receiveData['created_at'])->format('M d Y g:i A'));
                     $stickerData['store'] = strtoupper($receiveData['shipper']['name']);
                     $stickerData['process'] = $receiveData['its_process'];
                     $stickerData['shipping'] = strtoupper("TO: ".$process);
                     $stickerData['stickerNumber'] = "BOX: ".($q+1)." of ".$details['quantity_box'];
-                    $stickerData['qr'] = $qrBase64;
-                    $stickerData['box'] = strtoupper($details['boxes']['describe']);
+                    $qrBox = json_encode([
+                        "idReceiveDetail" => $details['id_receive_detail'],
+                        "boxNumber" => ($q+1)
+                    ]);
+                    $stickerData['qr'] = base64_encode(\QrCode::format('png')->size(200)->errorCorrection('H')->generate(base64_encode($qrBox)));
+                    $stickerData['box'] = strtoupper($details['boxes']['products']['name']." ".$details['boxes']['dimensions']);
                     array_push($sendToView,$stickerData);
                 }
             }
