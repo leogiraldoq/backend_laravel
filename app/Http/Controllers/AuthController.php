@@ -5,16 +5,19 @@ namespace App\Http\Controllers;
 use App\Traits\ResponseTrait;
 use Illuminate\Http\Request;
 use App\Interfaces\UsersRepositoryInterface;
+use App\Interfaces\EmployeesRepositoryInterface;
 
 class AuthController extends Controller
 {
     use ResponseTrait;
     private UsersRepositoryInterface $usersRepository;
+    private EmployeesRepositoryInterface $employeRepository;
     
-    public function __construct(UsersRepositoryInterface $usersRepository)
+    public function __construct(UsersRepositoryInterface $usersRepository,EmployeesRepositoryInterface $employeRepository)
     {
         $this->middleware('auth:api',['except' => ['login']]);
         $this->usersRepository = $usersRepository;
+        $this->employeRepository = $employeRepository;
     }
 
     /**
@@ -56,7 +59,10 @@ class AuthController extends Controller
     public function me()
     {
         try{
-            return $thi->responseOk('User authenticated',auth()->user());
+            $user = auth()->user();
+            $employee = $this->employeRepository->query($user['employee_id']);
+            $user['nameEmploye'] = $employee['names']." ".$employee['last_names'];
+            return $this->responseOk('User authenticated',$user);
         }catch(\Exception $e){
             return $this->responseError($e->getMessage());
         }   

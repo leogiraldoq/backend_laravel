@@ -18,8 +18,10 @@ use App\Http\Controllers\PreBillingControler;
 use App\Http\Controllers\ProcessingController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\QualityController;
+use App\Http\Controllers\SendController;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use App\Events\PreBilling;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +33,11 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+Route::get('/broadcast',function(){
+    brodcast( new PreBilling());
+    return "Message Sent";
+});
 
 Route::get('/hashing/{text}',function($text){
     echo Hash::make($text);
@@ -128,6 +135,7 @@ Route::group([
     ],function(){
         Route::get('/list-all',[ProfilesController::class,'listAll']);
         Route::post('/create',[ProfilesController::class,'create']);
+        Route::get('/show/users/module/{moduleName}', [ProfilesController::class,'showUsersModule']);
     }
 );
 
@@ -205,9 +213,10 @@ Route::group([
         'middleware' => 'api',
         'prefix' => 'qr-code'    
     ],function(){
-        Route::get('/pre-bill/show/info/{code}',[QrCodesController::class,'readQrPreBill']);
+        Route::get('/pre-bill/show/info/{code}/{channel}',[QrCodesController::class,'readQrPreBill']);
         Route::get('/processing/show/info/{code}',[QrCodesController::class,'readQrProcessing']);
         Route::get('/quality/show/info/{code}',[QrCodesController::class,'readQrQuality']);
+        Route::get('/shipping/show/info/{code}/{channel}',[QrCodesController::class,'readQrShipping']);
 });
 
 //PreBilling
@@ -234,3 +243,12 @@ Route::group([
         Route::post('/create',[QualityController::class,'create']);
 });
 
+//Send
+Route::group([
+        'middleware' => 'api',
+        'prefix' => 'send'        
+    ],function(){
+        Route::post('/create',[SendController::class,'createPrepare']);
+        Route::get('/to-deliver', [SendController::class,'toDelivery']);
+        Route::get('/to-deliver/customer/{idCustomer}', [SendController::class,'toDeliveryPerCustumer']);
+});

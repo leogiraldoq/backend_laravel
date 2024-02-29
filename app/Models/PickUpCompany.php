@@ -20,4 +20,8 @@ class PickUpCompany extends Model
     public function costumer():HasMany{
         return $this->hasMany(Costumers::class,'pick_up_company_id');
     }
+    
+    public function delivery():HasMany{
+        return $this->hasMany(Delivery::class,'pickup_id');
+    }
 }

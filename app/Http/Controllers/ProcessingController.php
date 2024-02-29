@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Traits\ResponseTrait;
 use App\Interfaces\ProcessingRepositoryInterface;
 use App\Interfaces\PreBillingRepositoryInterface;
+use Carbon\Carbon;
 
 
 class ProcessingController extends Controller
@@ -47,7 +48,7 @@ class ProcessingController extends Controller
             if($processCreate['error']){
                 return $this->responseError($processCreate['message'], $processCreate['code']);
             }
-            return $this->responseOk("The revision and data was saved you start ".Carbon::parse($receiveData['created_at'])->format('F d Y g:i:s a'), $processCreate);
+            return $this->responseOk("The revision and data was saved you start ". Carbon::parse($processCreate['data'][0]['created_at'])->format('F d Y g:i:s a'), $processCreate['data']);
         } catch (\Exception $exc) {
             return $this->responseError($exc->getMessage());
         }

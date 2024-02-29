@@ -29,4 +29,8 @@ class Shippers extends Model
     {
         return $this->hasMany(CustomersNotProcess::class,'shipper_id');
     }
+    
+    public function rel_pack_stores():HasMany{
+        return $this->hasMany(RelPackingStore::class, 'shipper_id');
+    }
 }

@@ -41,4 +41,8 @@ class ReceiveDetails extends Model
     public function quality():HasMany{
         return $this->hasMany(Quality::class,'receive_details_id');
     }
+    
+    public function rel_pack_store():HasMany{
+        return $this->hasMany(RelPackingStore::class,'receive_details_id');
+    }
 }

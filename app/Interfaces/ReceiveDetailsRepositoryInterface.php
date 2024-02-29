@@ -7,7 +7,5 @@ interface ReceiveDetailsRepositoryInterface{
     public function queryByDate($date);
     public function queryByIdReceieving($id);
     public function showAll();
-    public function showQrPreBill($code);
-    public function showQrProcessing($code);
-    public function showQrQuality($code);
+    public function show($id);
 }

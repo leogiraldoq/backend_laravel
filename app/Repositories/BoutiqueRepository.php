@@ -25,7 +25,7 @@ class BoutiqueRepository implements BoutiqueRepositoryInterface{
      */
     public function query($id)
     {
-        return Boutiques::where('id_boutique',$id)->with(['costumer','pick_up_company'])->firstOrFail();
+        return Boutiques::where('id_boutique',$id)->with(['costumer'])->firstOrFail()->toArray();
     }
 
     /**

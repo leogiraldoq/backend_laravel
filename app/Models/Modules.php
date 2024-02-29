@@ -25,7 +25,7 @@ class Modules extends Model
     
     public function profiles():BelongsToMany
     {
-        return $this->belongsToMany(Profile::class);
+        return $this->belongsToMany(Profile::class,'rel_profile_module','module_id','profile_id')->withPivot('read','create','update','delete');
     }
 
 }

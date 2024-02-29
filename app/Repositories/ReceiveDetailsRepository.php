@@ -72,93 +72,6 @@ class ReceiveDetailsRepository implements ReceiveDetailsRepositoryInterface{
         ])->where('receive_id', $id)->get()->toArray();
     }
     
-    
-    /**
-     * Return data for the qr read in the pre-bill process
-     * @param String $code Base 64 id receive_details
-     * @return Array Array for the field that we need to show
-     * @author LeoGiraldoQ
-     */
-    public function showQrPreBill($code){
-        $receiveDetails = $this->show(json_decode(base64_decode($code))->{'idReceiveDetail'});
-        $names = $receiveDetails[0]['receive']['user']['employee']['names'].' '.$receiveDetails[0]['receive']['user']['employee']['last_names'];
-        $result = array(
-            "received_date" => Carbon::parse($receiveDetails[0]['receive']['created_at'])->format('M d Y g:i A'),
-            "follow_number" => $receiveDetails[0]['receive']['follow_number'],
-            "customer" => $receiveDetails[0]['receive']['customer']['name'],
-            "boutique" => $receiveDetails[0]['boutiques']['name'],
-            "store" => $receiveDetails[0]['receive']['shipper']['name'],
-            "process" => $receiveDetails[0]['receive']['its_process'],
-            "box_type" => $receiveDetails[0]['boxes']['products']['name'],
-            "box_dimensions" => $receiveDetails[0]['boxes']['dimensions'],
-            "box_quantity" => $receiveDetails[0]['quantity_box'],
-            "box_weight" => $receiveDetails[0]['weight_box'],
-            "receibed_by" => $names,
-            "special_observations" => $receiveDetails[0]['receive']['observations'],
-            "id_receive_details" => $receiveDetails[0]['id_receive_detail'],
-            "id_receibed_user_id" => $receiveDetails[0]['receive']['user_id'],
-            "instructions" => (sizeof($receiveDetails[0]['boutiques']['rel_boutique_customer_instructions']) > 0 ? sizeof($receiveDetails[0]['boutiques']['rel_boutique_customer_instructions']) : null),
-        );
-        return $result;
-        
-    }
-    
-    /**
-     * Return data for the qr read in the processing process
-     * @param String $code Base 64 id receive_details
-     * @return Array Array for the field that we need to show
-     * @author LeoGiraldoQ
-     */
-    public function showQrProcessing($code){
-        $receiveDetails = $this->show(json_decode(base64_decode($code))->{'idReceiveDetail'});
-        $instructions = $this->relBoutiquyeIntructionsRepository->bringInstructiosPerBoutique($receiveDetails[0]['boutiques']['id_boutique']);
-        $processing = $this->processingRepository->resumeProcessing($receiveDetails[0]['pre_billing']['id_pre_bill']);
-        
-        $result = array(
-            "customer" => $receiveDetails[0]['receive']['customer']['name'],
-            "boutique" => $receiveDetails[0]['boutiques']['name'],
-            "store" => $receiveDetails[0]['receive']['shipper']['name'],
-            "invoiceNum" => ($receiveDetails[0]['pre_billing'] !== null ? $receiveDetails[0]['pre_billing']['invoice_number'] : null),
-            "total" => ($receiveDetails[0]['pre_billing'] !== null ? $receiveDetails[0]['pre_billing']['total_pieces'] : null),
-            "instructions" => (sizeof($instructions) > 0 ? json_decode($instructions[0]["rel_customer_intructions"]['instructions']) : null),
-            "preBillId" => ($receiveDetails[0]['pre_billing'] !== null ? $receiveDetails[0]['pre_billing']['id_pre_bill'] : null),
-            "preBillQnty" => ($receiveDetails[0]['pre_billing'] !== null ? $receiveDetails[0]['pre_billing']['quantity_styles'] : null),
-            "processing" => $processing
-        );
-        return $result;
-    }
-    
-    /**
-     * Return data for the qr read in the quality process
-     * @param String $code Base 64 id receive_details
-     * @return Array Array for the field that we need to show
-     * @author LeoGiraldoQ
-     */
-    public function showQrQuality($code){
-        $receiveDetails = $this->show(json_decode(base64_decode($code))->{'idReceiveDetail'});
-        $instructions = $this->relBoutiquyeIntructionsRepository->bringInstructiosPerBoutique($receiveDetails[0]['boutiques']['id_boutique']);
-        $processing = $this->processingRepository->resumeProcessing($receiveDetails[0]['pre_billing']['id_pre_bill']);
-        $result = array(
-            "received_date" => Carbon::parse($receiveDetails[0]['receive']['created_at'])->format('M d Y g:i A'),
-            "follow_number" => $receiveDetails[0]['receive']['follow_number'],
-            "customer" => $receiveDetails[0]['receive']['customer']['name'],
-            "boutique" => $receiveDetails[0]['boutiques']['name'],
-            "store" => $receiveDetails[0]['receive']['shipper']['name'],
-            "box_type" => $receiveDetails[0]['boxes']['products']['name'],
-            "box_dimensions" => $receiveDetails[0]['boxes']['dimensions'],
-            "box_quantity" => $receiveDetails[0]['quantity_box'],
-            "box_weight" => $receiveDetails[0]['weight_box'],
-            "receibed_by" => $receiveDetails[0]['receive']['user']['employee']['names'].' '.$receiveDetails[0]['receive']['user']['employee']['last_names'],
-            "id_receive_details" => $receiveDetails[0]['id_receive_detail'],
-            "instructions" => (sizeof($instructions) > 0 ? json_decode($instructions[0]["rel_customer_intructions"]['instructions']) : null),
-            "invoiceNum" => ($receiveDetails[0]['pre_billing'] !== null ? $receiveDetails[0]['pre_billing']['invoice_number'] : null),
-            "invoiceTotal" => ($receiveDetails[0]['pre_billing'] !== null ? $receiveDetails[0]['pre_billing']['total_pieces'] : null),
-            "preBillId" => ($receiveDetails[0]['pre_billing'] !== null ? $receiveDetails[0]['pre_billing']['id_pre_bill'] : null),
-            "processing" => $processing
-        );
-        return $result;
-    }
-    
     /**
      * Query for all receive details with receive, customers, users,shippers and boutiques
      * @return Model Result for the query
@@ -191,10 +104,14 @@ class ReceiveDetailsRepository implements ReceiveDetailsRepositoryInterface{
             'receive',
             'receive.shipper',
             'receive.customer',
+            'receive.customer.pick_up_company',
             'receive.user',
             'receive.user.employee',
             'pre_billing',
             'pre_billing.processing',
+            'pre_billing.users.employee',
+            'quality',
+            'quality.user.employee'
         ])->where('id_receive_detail',$id)->get()->toArray();
     }
 }

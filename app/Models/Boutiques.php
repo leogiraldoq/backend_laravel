@@ -40,4 +40,8 @@ class Boutiques extends Model
     {
         return $this->hasMany(RelBoutiqueCustomerInstructions::class,'boutique_id');
     }
+    
+    public function packing():HasMany{
+        return $this->hasMany(Packing::class,'boutique_id');
+    }
 }

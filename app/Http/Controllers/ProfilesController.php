@@ -56,5 +56,14 @@ class ProfilesController extends Controller
             return $this->responseError($exc->getMessage());
         }
     }
+ 
     
+    public function showUsersModule($module){
+        try {
+            $profileUsers = $this->profileRepository->showUsersProfile($module);
+            return $this->responseOk("User for module ".$module." was list", $profileUsers);
+        } catch (Exception $exc) {
+            return $this->responseError($exc->getMessage());
+        }
+    }
 }

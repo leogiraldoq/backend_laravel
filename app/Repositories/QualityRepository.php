@@ -32,6 +32,6 @@ class QualityRepository implements QualityRepositoryInterface{
     
     
     public function queryReceiveDetailsQuality($idReceiveDetails){
-        return ReceiveDetails::with(['quality','boutiques','receive','receive.customer'])->where("id_receive_detail",$idReceiveDetails)->get();
+        return ReceiveDetails::with(['quality','boutiques','receive','receive.customer'])->where("id_receive_detail",$idReceiveDetails)->get()->toArray();
     }
 }

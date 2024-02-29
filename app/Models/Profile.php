@@ -33,4 +33,9 @@ class Profile extends Model
     {
         return $this->belongsToMany(Modules::class,'rel_profile_module','profile_id','module_id')->withPivot('read','create','update','delete');
     }
+    
+    public function users():BelongsToMany
+    {
+        return $this->belongsToMany(Users::class,'rel_user_profile','profile_id','user_id');
+    }
 }

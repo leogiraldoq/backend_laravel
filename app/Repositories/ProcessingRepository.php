@@ -131,7 +131,7 @@ class ProcessingRepository implements ProcessingRepositoryInterface
                     "workShare" => ($process['work_share'] ? "Share" : "No share"),
                     "madeFor" => $process['users']['employee']['names'].' '.$process['users']['employee']['last_names'],
                     "total" => ($process['style_total']*$process['set']),
-                    "q" => false
+                    "q" => 0
                 ]);
                 $processinResume['total'] = $processinResume['total'] + ($process['style_total']*$process['set']);
             }

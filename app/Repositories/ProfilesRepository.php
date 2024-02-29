@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Interfaces\ProfilesRepositoryInterface;
 use App\Models\Profile;
+use App\Models\Modules;
 use App\Interfaces\RelProfileModuleRepositoryInterface;
 
 class ProfilesRepository implements ProfilesRepositoryInterface{
@@ -60,4 +61,21 @@ class ProfilesRepository implements ProfilesRepositoryInterface{
         ]);
     }
 
+    
+    public function showUsersProfile($module){
+        $moduleUsers = Modules::with(['profiles','profiles.users','profiles.users.employee'])->where("module_name",$module)->get()->toArray();
+        $usersModule = array();
+        foreach($moduleUsers as $module){
+            foreach ($module['profiles'] as $profile){
+                foreach ($profile['users'] as $user){
+                    array_push($usersModule,[
+                        "userId" => $user['id_user'],
+                        "names" => $user['employee']['names']
+                    ]);
+                }   
+            }
+        }
+        return $usersModule;
+
+    }
 }

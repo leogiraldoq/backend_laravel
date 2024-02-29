@@ -9,10 +9,10 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-        public function up(): void
+    public function up(): void
     {
-        Schema::table('processing', function($table) {
-            $table->integer("set");
+        Schema::table('packing', function (Blueprint $table) {
+            $table->integer('quantity')->default(0);
         });
     }
 
@@ -21,9 +21,9 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('processing', function($table) {
-            $table->dropColumn('set');
+        Schema::table('packing', function (Blueprint $table) {
+            $table->dropColumn('quantity');
         });
-    }
 
+    }
 };

@@ -28,6 +28,11 @@ use App\Interfaces\ProcessingRepositoryInterface;
 use App\Interfaces\ProcessAddWorkRepositoryInterface;
 use App\Interfaces\RelProcessAddWorkRepositoryInterface;
 use App\Interfaces\ProductsRepositoryInterface;
+use App\Interfaces\QualityRepositoryInterface;
+use App\Interfaces\QrCodesRepositoryInterface;
+use App\Interfaces\PackingRepositoryInterface;
+use App\Interfaces\RelPackStoreRepositoryInterface;
+use App\Interfaces\DeliveryRepositoryInterface;
 
 use \App\Repositories\ProfilesRepository;
 use App\Repositories\RelCostumerInstructionsRepository;
@@ -55,6 +60,11 @@ use App\Repositories\ProcessingRepository;
 use App\Repositories\ProcessAddWorkRepository;
 use App\Repositories\RelProcessAddWorkRepository;
 use App\Repositories\ProductsRepository;
+use App\Repositories\QualityRepository;
+use App\Repositories\QrCodeRepository;
+use App\Repositories\PackingRepository;
+use App\Repositories\RelPackStoreRepository;
+use App\Repositories\DeliveryRepository;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -91,6 +101,11 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(ProcessAddWorkRepositoryInterface::class, ProcessAddWorkRepository::class);
         $this->app->bind(RelProcessAddWorkRepositoryInterface::class, RelProcessAddWorkRepository::class);
         $this->app->bind(ProductsRepositoryInterface::class, ProductsRepository::class);
+        $this->app->bind(QualityRepositoryInterface::class, QualityRepository::class);
+        $this->app->bind(QrCodesRepositoryInterface::class, QrCodeRepository::class);
+        $this->app->bind(PackingRepositoryInterface::class, PackingRepository::class);
+        $this->app->bind(RelPackStoreRepositoryInterface::class, RelPackStoreRepository::class);
+        $this->app->bind(DeliveryRepositoryInterface::class, DeliveryRepository::class);
     }
 
     /**

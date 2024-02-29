@@ -22,15 +22,13 @@ class QualityController extends Controller
                "idRceiveDetail" => "required|integer",
                "qualityControl" => "required|array|min:1",
                "qualityControl.*.idProcess" => "required|integer",
-               "qualityControl.*.quality" => "required|boolean",
-               "qualityControl.*.quality" => Rule::in([true])
+               "qualityControl.*.quality" => "required|in:1",
             ]);
             $qualityCreate = $this->qualityRepository->create($qualityValidate, (auth()->user())->id_user);
-            dd($qualityCreate);
-            return $this->responseOk("Control quality save", $qualityCreate);
+            return $this->responseOk("The order # ".$qualityCreate[0]['receive']['follow_number']." for the customer ".$qualityCreate[0]['receive']['customer']['name']." boutique ".$qualityCreate[0]['boutiques']['name']." its ready to packing", $qualityCreate);
         } catch (Exception $exc) {
             return $this->responseError($exc->getMessage());
         }
-        }
+    }
     
 }

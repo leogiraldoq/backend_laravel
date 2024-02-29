@@ -26,4 +26,8 @@ class Boxes extends Model
     public function products():BelongsTo{
         return $this->belongsTo(Products::class, "product_id");
     }
+    
+    public function packing():HasMany{
+        return $this->hasMany(Packing::class,'box_id');
+    }
 }

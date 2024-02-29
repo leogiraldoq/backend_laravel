@@ -49,4 +49,8 @@ class Costumers extends Model
     {
         return $this->hasMany(CustomersNotProcess::class,'customer_id');
     }
+    
+    public function packing():HasMany{
+        return $this->hasMany(Packing::class, 'customer_id');
+    }
 }
