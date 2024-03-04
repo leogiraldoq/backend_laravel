@@ -257,7 +257,7 @@ class ReceiveController extends Controller
             $stickerData['weight'] = $details['weight_box'];
             array_push($sendToView['tableResume'],$stickerData);   
         }
-        $ticketDimensions = array(0,0,216,400);
+        $ticketDimensions = array(0,0,216,600);
         $pdf = Pdf::loadView('pdf.ticket-receive', compact('sendToView'))->setPaper($ticketDimensions, "portrait");
         return base64_encode($pdf->output());
     }

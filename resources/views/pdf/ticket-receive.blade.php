@@ -1,7 +1,8 @@
 <html>
     <style>
         @page{
-            size: 216pt 400pt;
+            margin-top: 0px; 
+            margin-bottom: 0px;
         }
         @font-face {
             font-family: 'Rubik', sans-serif;
