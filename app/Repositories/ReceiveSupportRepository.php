@@ -32,4 +32,12 @@ class ReceiveSupportRepository implements ReceiveSupportsRepositoryInterface{
            ['stickers' => $sticker]
         );
     }
+    
+    public function insert($receiveId, $sticker, $ticket){
+        return ReceiveSupports::create([
+           'receive_id' => $receiveId,
+           'stickers' => $sticker,
+           'ticket' => $ticket
+        ]);
+    }
 }

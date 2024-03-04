@@ -49,8 +49,9 @@ class ReceiveController extends Controller
                 $validateRecibe['user'] = (auth()->user())->id_user;
             }
             $recibe = $this->receiveRepository->create($validateRecibe);
-            $stickers = $this->createStikers($recibe['ticket']);
-            $recibe['ticket']['stickers'] = ($this->receiveSupportRepository->upsertSticker($recibe['ticket']['id_receive'], $stickers))['stickers'];
+            $recibe['ticket']['print']['stickers']= $this->createStikers($recibe['ticket']);
+            $recibe['ticket']['print']['ticket']= $this->createTicket($recibe['ticket']);
+            $pdfSave = $this->receiveSupportRepository->insert($recibe['ticket']['id_receive'], $recibe['ticket']['print']['stickers'],$recibe['ticket']['print']['ticket']);
             return $this->responseOk("Receive #".$recibe['ticket']['follow_number']." was create", $recibe);
         } catch (Exception $e) {
             return $this->responseError($e->getMessage());
@@ -237,5 +238,27 @@ class ReceiveController extends Controller
         } catch (Exception $exc) {
             return $this->responseError($exc->getMessage());
         }
+    }
+    
+    private function createTicket($receiveData){
+        $stickerData = array();
+        $sendToView=array();
+        $sendToView['follow_number'] = $receiveData['follow_number'];
+        $sendToView['shop'] = $receiveData['shipper']['name'];
+        $sendToView['costumer'] = $receiveData['customer']['name'];
+        $sendToView['date_receive'] = strtoupper(Carbon::parse($receiveData['created_at'])->format('M d Y g:i A'));
+        $sendToView['tableResume'] = array();
+        $sendToView['whoreceive'] = $receiveData['user']['employee']['names']." ".$receiveData['user']['employee']['last_names'];
+        foreach ($receiveData['receive_details'] as $details ){    
+            $stickerData['boutique'] = $details['boutiques']['name'];
+            $stickerData['quantity'] = $details['quantity_box'];
+            $stickerData['product'] = $details['boxes']['products']['name'];
+            $stickerData['size'] = $details['boxes']['dimensions'];
+            $stickerData['weight'] = $details['weight_box'];
+            array_push($sendToView['tableResume'],$stickerData);   
+        }
+        $ticketDimensions = array(0,0,216,366);
+        $pdf = Pdf::loadView('pdf.ticket-receive', compact('sendToView'))->setPaper($ticketDimensions, "portrait");
+        return base64_encode($pdf->output());
     }
 }
