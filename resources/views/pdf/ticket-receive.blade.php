@@ -12,12 +12,15 @@
         html,body{
             text-align: center;
             font-size: 12px;
-            margin: 0px;
         }
         small{
             font-size: 10px;
         }
+        table{
+            margin-left: 3px;
+        }
         table,tr,th,td{
+            text-align: center;
             border: 1px solid black;
             border-collapse: collapse;
         }
@@ -34,7 +37,7 @@
                 <b>Customer:</b> {{ $sendToView['costumer'] }}<br/>
                 <b>Date receive:</b> {{ $sendToView['date_receive'] }}</p>
             <p>Resume receive:</p>
-            <table class="text-center mb-2 ml-1 ticketFont">
+            <table>
                 <tr>
                     <th>Boutique</th>
                     <th>Quant</th>
