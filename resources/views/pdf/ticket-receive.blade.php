@@ -12,7 +12,7 @@
         }
         html,body{
             text-align: center;
-            font-size: 12px;
+            font-size: 14px;
         }
         small{
             font-size: 10px;

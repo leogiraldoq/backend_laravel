@@ -225,6 +225,7 @@ Route::group([
         'prefix' => 'pre-bill'        
     ],function(){
         Route::post('/create',[PreBillingControler::class,'create']);
+        Route::get('/list-all',[PreBillingControler::class,'index']);
 });
 
 //Processing manufacturing

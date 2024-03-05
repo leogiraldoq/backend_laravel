@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Interfaces\PreBillingRepositoryInterface;
 use App\Models\PreBilling;
+use Carbon\Carbon;
 
 class PreBillingRepository implements PreBillingRepositoryInterface{
     
@@ -42,5 +43,32 @@ class PreBillingRepository implements PreBillingRepositoryInterface{
      */
     public function totalPiecesInvoice($idPreBill){
         return PreBilling::find($idPreBill)->getAttribute('total_pieces');
+    }
+    
+    public function listAll(){
+        $preBill = PreBilling::with([
+            'receive_details',
+            'receive_details.boutiques',
+            'receive_details.boxes',
+            'receive_details.boxes.products',
+            'receive_details.receive',
+            'receive_details.receive.customer',
+            'receive_details.receive.shipper',
+            'receive_details.receive.user.employee',
+        ])->get()->toArray();
+        $resumePreBill = array();
+        foreach ($preBill as $pb){
+            array_push($resumePreBill, [
+                'idPreBill' =>  $pb['id_pre_bill'],
+                'invoiceNumber' => $pb['invoice_number'],
+                'totalInvocePieces' => $pb['total_pieces'],
+                'boutique' => $pb['receive_details']['boutiques']['name'],
+                'totalBox' => $pb['receive_details']['quantity_box'],
+                'customer' => $pb['receive_details']['receive']['customer']['name'],
+                'store' => $pb['receive_details']['receive']['shipper']['name'],
+                'receiveDate' => Carbon::parse($pb['receive_details']['receive']['created_at'])->format('M d Y g:i A')
+            ]);
+        }
+        return $resumePreBill;
     }
 }

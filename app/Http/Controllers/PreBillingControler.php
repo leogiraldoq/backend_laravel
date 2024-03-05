@@ -38,6 +38,15 @@ class PreBillingControler extends Controller
         } catch (\Exception $exc) {
             return $this->responseError($exc->getMessage());
         }
+    }
+    
+    public function index(){
+        try {
+            $preBillList = $this->preBillRepository->listAll();
+            return $this->responseOk("PreBilling resume listed", $preBillList);
+        } catch (Exception $exc) {
+            return $this->responseError($exc->getMessage());
         }
+    }
     
 }
