@@ -14,7 +14,6 @@ class Receive extends Model
     
     protected $table='receive';
     protected $primaryKey='id_receive';
-    protected $hidden = ['photo'];
     protected $fillable=[
         'follow_number',
         'user_id',

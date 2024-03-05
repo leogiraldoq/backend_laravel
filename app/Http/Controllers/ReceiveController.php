@@ -218,6 +218,9 @@ class ReceiveController extends Controller
     public function getTicket($idReceive){
         try {
             $ticket = $this->receiveRepository->index($idReceive);
+            $pdfsToPrint = $this->receiveSupportRepository->selectByReceiveId($ticket['id_receive']);
+            $ticket['print']['stickers'] = $pdfsToPrint[0]['stickers'];
+            $ticket['print']['ticket'] = $pdfsToPrint[0]['ticket'];
             return $this->responseOk("Ticket return", $ticket);
         } catch (Exception $exc) {
             return $this->responseError($exc->getMessage());

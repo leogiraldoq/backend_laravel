@@ -16,4 +16,5 @@ interface ReceiveSupportsRepositoryInterface {
     public function upsertTicket($receiveId, $ticket);
     public function upsertSticker($receiveId, $sticker);
     public function insert($receiveId, $sticker, $ticket);
+    public function selectByReceiveId($idReceive);
 }

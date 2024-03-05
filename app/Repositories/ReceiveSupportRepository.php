@@ -40,4 +40,8 @@ class ReceiveSupportRepository implements ReceiveSupportsRepositoryInterface{
            'ticket' => $ticket
         ]);
     }
+    
+    public function selectByReceiveId($idReceive){
+        return ReceiveSupports::where('receive_id',$idReceive)->get()->toArray();
+    }
 }
