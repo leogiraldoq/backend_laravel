@@ -136,6 +136,7 @@ Route::group([
         Route::get('/list-all',[ProfilesController::class,'listAll']);
         Route::post('/create',[ProfilesController::class,'create']);
         Route::get('/show/users/module/{moduleName}', [ProfilesController::class,'showUsersModule']);
+        Route::get('/menu/me',[ProfilesController::class,'showMenuUsers']);
     }
 );
 

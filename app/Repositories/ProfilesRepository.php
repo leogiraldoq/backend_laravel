@@ -5,6 +5,7 @@ namespace App\Repositories;
 use App\Interfaces\ProfilesRepositoryInterface;
 use App\Models\Profile;
 use App\Models\Modules;
+use App\Models\RelUserProfile;
 use App\Interfaces\RelProfileModuleRepositoryInterface;
 
 class ProfilesRepository implements ProfilesRepositoryInterface{
@@ -41,7 +42,10 @@ class ProfilesRepository implements ProfilesRepositoryInterface{
     public function create($newData){
         $profile = Profile::create([
             'name' => $newData['name'],
-            'description' => $newData['description']
+            'description' => $newData['description'],
+            'menu_bsp' => json_encode($newData['menuBsp']),
+            'menu_admin' => json_encode($newData['menuAdmin']),
+
         ]);
         $relProfileModules = $this->relProfileModuleRepository->create($profile['id_profile'], $newData['modulesPermissions']);
         $profile['relProfileModules'] = $relProfileModules;
@@ -76,6 +80,14 @@ class ProfilesRepository implements ProfilesRepositoryInterface{
             }
         }
         return $usersModule;
-
     }
+    
+    public function showMenuUser($idUser){
+        $moduleUsers = RelUserProfile::where('user_id',$idUser)->with(['profile',])->get()->toArray();
+        $menuUser = array();
+        $menuUser['Bsp'] = $moduleUsers[0]['profile']['menu_bsp'];
+        $menuUser['Admin'] = $moduleUsers[0]['profile']['menu_admin'];
+        return $menuUser;
+    }
+    
 }

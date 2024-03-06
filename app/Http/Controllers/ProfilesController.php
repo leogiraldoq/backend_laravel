@@ -43,6 +43,8 @@ class ProfilesController extends Controller
             $validated = $request->validate([
                 'name' => 'required|unique:profiles|min:4|max:20',
                 'description' => 'nullable|min:10|max:255',
+                'menuBsp' => 'required|array|min:1',
+                'menuAdmin' => 'nullab|array',
                 'modulesPermissions' => 'required|array|min:1',
                 'modulesPermissions.*.id_module' => 'required|integer|min:1',
                 'modulesPermissions.*.create' => 'required|boolean',
@@ -62,6 +64,15 @@ class ProfilesController extends Controller
         try {
             $profileUsers = $this->profileRepository->showUsersProfile($module);
             return $this->responseOk("User for module ".$module." was list", $profileUsers);
+        } catch (Exception $exc) {
+            return $this->responseError($exc->getMessage());
+        }
+    }
+    
+    public function showMenuUsers(){
+        try {
+            $menu = $this->profileRepository->showMenuUser((auth()->user())->id_user);
+            return $this->responseOk("Return menu", $menu);
         } catch (Exception $exc) {
             return $this->responseError($exc->getMessage());
         }

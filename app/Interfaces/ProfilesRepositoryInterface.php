@@ -8,5 +8,5 @@ interface ProfilesRepositoryInterface{
     public function create($newData);
     public function update($updateData);
     public function showUsersProfile($module);
-    
+    public function showMenuUser($idUser);
 }

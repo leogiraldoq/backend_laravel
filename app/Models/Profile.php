@@ -16,7 +16,9 @@ class Profile extends Model
     protected $primaryKey = 'id_profile';
     protected $fillable=[
         'name',
-        'description'
+        'description',
+        'menu_bsp',
+        'menu_admin'
     ];
 
     public function rel_user_profile():HasMany
