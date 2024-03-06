@@ -57,6 +57,7 @@ class QrCodeRepository implements QrCodesRepositoryInterface{
             "id_receive_details" => $receiveDetails[0]['id_receive_detail'],
             "id_receibed_user_id" => $receiveDetails[0]['receive']['user_id'],
             "instructions" => (sizeof($receiveDetails[0]['boutiques']['rel_boutique_customer_instructions']) > 0 ? sizeof($receiveDetails[0]['boutiques']['rel_boutique_customer_instructions']) : null),
+            "invoiceNum" => ($receiveDetails[0]['pre_billing'] !== null ? $receiveDetails[0]['pre_billing']['invoice_number'] : null),
         );
         return $result;
         
