@@ -99,7 +99,11 @@ class QrCodeRepository implements QrCodesRepositoryInterface{
     public function showQrQuality($code){
         $receiveDetails = $this->receiveDetailsRepository->show(json_decode(base64_decode($code))->{'idReceiveDetail'});
         $instructions = $this->relCostumerBoutiqueInstructionRepository->bringInstructiosPerBoutique($receiveDetails[0]['boutiques']['id_boutique']);
-        $processing = $this->processRepository->resumeProcessing($receiveDetails[0]['pre_billing']['id_pre_bill']);
+        if($receiveDetails[0]['pre_billing'] !== null){
+            $processing = $this->processRepository->resumeProcessing($receiveDetails[0]['pre_billing']['id_pre_bill']);
+        }else{
+            $processing = null;
+        }
         $result = array(
             "received_date" => Carbon::parse($receiveDetails[0]['receive']['created_at'])->format('M d Y g:i A'),
             "follow_number" => $receiveDetails[0]['receive']['follow_number'],
@@ -112,10 +116,10 @@ class QrCodeRepository implements QrCodesRepositoryInterface{
             "box_weight" => $receiveDetails[0]['weight_box'],
             "receibed_by" => $receiveDetails[0]['receive']['user']['employee']['names'].' '.$receiveDetails[0]['receive']['user']['employee']['last_names'],
             "id_receive_details" => $receiveDetails[0]['id_receive_detail'],
-            "instructions" => json_decode($instructions[0]["rel_customer_intructions"]['instructions']),
-            "invoiceNum" => $receiveDetails[0]['pre_billing']['invoice_number'],
-            "invoiceTotal" => $receiveDetails[0]['pre_billing']['total_pieces'],
-            "preBillId" => $receiveDetails[0]['pre_billing']['id_pre_bill'],
+            "instructions" => (sizeof($instructions) > 0 ? json_decode($instructions[0]["rel_customer_intructions"]['instructions']) : null),
+            "invoiceNum" => ($receiveDetails[0]['pre_billing'] !== null ? $receiveDetails[0]['pre_billing']['invoice_number'] : null),
+            "invoiceTotal" => ($receiveDetails[0]['pre_billing'] !== null ? $receiveDetails[0]['pre_billing']['total_pieces'] : null),
+            "preBillId" => ($receiveDetails[0]['pre_billing'] !== null ? $receiveDetails[0]['pre_billing']['id_pre_bill'] : null),
             "processing" => $processing,
             "quality" => $receiveDetails[0]['quality'],
         );
@@ -125,7 +129,7 @@ class QrCodeRepository implements QrCodesRepositoryInterface{
     public function showQrShipping($code){
         $receiveDetails = $this->receiveDetailsRepository->show(json_decode(base64_decode($code))->{'idReceiveDetail'});
         $relPackStore = $this->relPackStoreRepository->showReceiveDetailsId(json_decode(base64_decode($code))->{'idReceiveDetail'});
-        $instructions = json_decode($this->relCostumerBoutiqueInstructionRepository->bringInstructiosPerBoutique($receiveDetails[0]['boutiques']['id_boutique'])[0]["rel_customer_intructions"]['instructions']);
+        $instructions = $this->relCostumerBoutiqueInstructionRepository->bringInstructiosPerBoutique($receiveDetails[0]['boutiques']['id_boutique']);
         unset($instructions->{'sampleImage'});
         $receiveDetails[0]['receive']['shipper']['id_receive_details'] = $receiveDetails[0]['id_receive_detail'];
         $result = array(
@@ -141,9 +145,9 @@ class QrCodeRepository implements QrCodesRepositoryInterface{
             "box_quantity" => $receiveDetails[0]['quantity_box'],
             "box_weight" => $receiveDetails[0]['weight_box'],
             "id_receive_details" => $receiveDetails[0]['id_receive_detail'],
-            "instructions" => $instructions,
-            "qualityDate" => Carbon::parse($receiveDetails[0]['quality'][0]['created_at'])->format('M d Y g:i A'),
-            "qualityUser" => $receiveDetails[0]['quality'][0]['user']['employee']['names']." ".$receiveDetails[0]['quality'][0]['user']['employee']['last_names'],
+            "instructions" => (sizeof($instructions) > 0 ? json_decode($instructions[0]["rel_customer_intructions"]['instructions']) : null),
+            "qualityDate" => (sizeof($receiveDetails[0]['quality']) > 0 ? Carbon::parse($receiveDetails[0]['quality'][0]['created_at'])->format('M d Y g:i A') : null),
+            "qualityUser" => (sizeof($receiveDetails[0]['quality']) > 0 ? $receiveDetails[0]['quality'][0]['user']['employee']['names']." ".$receiveDetails[0]['quality'][0]['user']['employee']['last_names'] : null),
             "process" => $receiveDetails[0]['receive']['its_process'],
             "product" => $receiveDetails[0]['boxes']['products'],
             "box" => $receiveDetails[0]['boxes'],
