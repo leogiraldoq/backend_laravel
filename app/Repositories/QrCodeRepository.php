@@ -71,8 +71,11 @@ class QrCodeRepository implements QrCodesRepositoryInterface{
     public function showQrProcessing($code){
         $receiveDetails = $this->receiveDetailsRepository->show(json_decode(base64_decode($code))->{'idReceiveDetail'});
         $instructions = $this->relCostumerBoutiqueInstructionRepository->bringInstructiosPerBoutique($receiveDetails[0]['boutiques']['id_boutique']);
-        $processing = $this->processRepository->resumeProcessing($receiveDetails[0]['pre_billing']['id_pre_bill']);
-        
+        if($receiveDetails[0]['pre_billing'] !== null){
+            $processing = $this->processRepository->resumeProcessing($receiveDetails[0]['pre_billing']['id_pre_bill']);
+        }else{
+            $processing = null;
+        }
         $result = array(
             "customer" => $receiveDetails[0]['receive']['customer']['name'],
             "boutique" => $receiveDetails[0]['boutiques']['name'],
