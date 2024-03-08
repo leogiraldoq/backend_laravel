@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Traits\ResponseTrait;
 use App\Interfaces\ProcessingRepositoryInterface;
-use App\Interfaces\PreBillingRepositoryInterface;
+use App\Interfaces\EmployeesRepositoryInterface;
 use Carbon\Carbon;
 
 
@@ -14,14 +14,14 @@ class ProcessingController extends Controller
     use ResponseTrait;
     
     private ProcessingRepositoryInterface $processingRepository;
-    private PreBillingRepositoryInterface $preBillRepository;
+    private EmployeesRepositoryInterface $employeeRepository;
     
     public function __construct(
             ProcessingRepositoryInterface $processingRepository,
-            PreBillingRepositoryInterface $preBillRepository
+            EmployeesRepositoryInterface $employeeRepository,
         ) {
         $this->processingRepository = $processingRepository;
-        $this->preBillRepository = $preBillRepository;
+        $this->employeeRepository = $employeeRepository;
     }
     
     /**
@@ -43,8 +43,7 @@ class ProcessingController extends Controller
                 "stylesProcess.*.set" => "required|integer",
                 "workAdd" => "nullable|array"
             ]);
-            $userId = (auth()->user())->id_user;
-            $processCreate = $this->processingRepository->create($processValidate, $userId);
+            $processCreate = $this->processingRepository->create($processValidate, (auth()->user())->id_user);
             if($processCreate['error']){
                 return $this->responseError($processCreate['message'], $processCreate['code']);
             }
@@ -53,4 +52,31 @@ class ProcessingController extends Controller
             return $this->responseError($exc->getMessage());
         }
     }
+    
+    public function listPerUser(){
+        try {
+            $resumeProcessingUser = $this->processingRepository->resumeProcessingUser((auth()->user())->id_user);
+            $employee = $this->employeeRepository->query(auth()->user()->employee_id);
+            $resumeProcessingUser['whoami'] = $employee['names']." ".$employee['last_names'];
+            return $this->responseOk("Resume processing per user listed", $resumeProcessingUser);
+        } catch (Exception $exc) {
+            return $this->responseError($exc->getMessage());
+        }
+    }
+    
+    public function listPerUserDate(Request $request){
+        try {
+            $validateData = $request->validate([
+                "from" => "required|date",
+                "to" => "required|date",
+            ]);
+            $resumeProcessingUser = $this->processingRepository->resumeProcessingUserDate((auth()->user())->id_user,$validateData['from'],$validateData['to']);
+            $employee = $this->employeeRepository->query(auth()->user()->employee_id);
+            $resumeProcessingUser['whoami'] = $employee['names']." ".$employee['last_names'];
+            return $this->responseOk("Resume processing per user listed", $resumeProcessingUser);
+        } catch (Exception $exc) {
+            return $this->responseError($exc->getMessage());
+        }
+    }
+    
 }

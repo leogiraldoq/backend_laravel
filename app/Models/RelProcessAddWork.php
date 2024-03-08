@@ -17,10 +17,10 @@ class RelProcessAddWork extends Model
     ];
     
     public function processing():BelongsTo{
-        return $this->belongsTo(Processing::class,"id_process");
+        return $this->belongsTo(Processing::class,"process_id");
     }
     
     public function process_add_work():BelongsTo{
-        return $this->belongsTo(ProcessAddWork::class,"id_add_work");
+        return $this->belongsTo(ProcessAddWork::class,"add_work_id");
     }
 }

@@ -9,4 +9,5 @@ interface BoutiqueRepositoryInterface{
     public function create($newBoutique);
     public function update($updateBoutique,$idBoutique);
     public function boutiquesInstructions($idCustomer);
+    public function contactInfo($idBoutique);
 }

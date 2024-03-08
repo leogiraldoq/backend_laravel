@@ -19,6 +19,7 @@ use App\Http\Controllers\ProcessingController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\QualityController;
 use App\Http\Controllers\SendController;
+use App\Http\Controllers\DeliveryController;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use App\Events\PreBilling;
@@ -235,6 +236,8 @@ Route::group([
         'prefix' => 'processing'        
     ],function(){
         Route::post('/create',[ProcessingController::class,'create']);
+        Route::get('/list/user',[ProcessingController::class,'listPerUser']);
+        Route::post('/list/user/dates',[ProcessingController::class,'listPerUserDate']);
 });
 
 //Quality
@@ -253,4 +256,12 @@ Route::group([
         Route::post('/create',[SendController::class,'createPrepare']);
         Route::get('/to-deliver', [SendController::class,'toDelivery']);
         Route::get('/to-deliver/customer/{idCustomer}', [SendController::class,'toDeliveryPerCustumer']);
+});
+
+//Send
+Route::group([
+        'middleware' => 'api',
+        'prefix' => 'delivery'        
+    ],function(){
+        Route::post('/create',[DeliveryController::class,'save']);
 });

@@ -104,5 +104,7 @@ class BoutiqueRepository implements BoutiqueRepositoryInterface{
         return $boutiquesResume;
     }
     
-
+    public function contactInfo($idBoutique){
+        return Boutiques::with(["costumer"])->where("id_boutique",$idBoutique);
+    }
 }

@@ -6,6 +6,7 @@ use App\Interfaces\ProcessingRepositoryInterface;
 use App\Interfaces\PreBillingRepositoryInterface;
 use App\Interfaces\RelProcessAddWorkRepositoryInterface;
 use \App\Models\Processing;
+use Carbon\Carbon;
 
 class ProcessingRepository implements ProcessingRepositoryInterface
 {
@@ -62,7 +63,33 @@ class ProcessingRepository implements ProcessingRepositoryInterface
      * @author LeoGiraldoQ
      */
     public function showPreBillingId($preBillId){
-        return Processing::with(['pre_billing','users','users.employee'])->where('pre_bill_id',$preBillId)->get()->toArray();
+        return Processing::with(['pre_billing','users','users.employee','rel_process_add_work','rel_process_add_work.process_add_work'])->where('pre_bill_id',$preBillId)->get()->toArray();
+    }
+    
+    public function showUserId($userId){
+        return Processing::with([
+            'pre_billing',
+            'pre_billing.receive_details',
+            'pre_billing.receive_details.boutiques',
+            'pre_billing.receive_details.boutiques.costumer',
+            'pre_billing.receive_details.receive',
+            'pre_billing.receive_details.receive.shipper',
+            'rel_process_add_work',
+            'rel_process_add_work.process_add_work'
+        ])->where('user_id',$userId)->get()->toArray();
+    }
+    
+    public function showUserIdDates($userId,$from,$to){
+        return Processing::with([
+            'pre_billing',
+            'pre_billing.receive_details',
+            'pre_billing.receive_details.boutiques',
+            'pre_billing.receive_details.boutiques.costumer',
+            'pre_billing.receive_details.receive',
+            'pre_billing.receive_details.receive.shipper',
+            'rel_process_add_work',
+            'rel_process_add_work.process_add_work'
+        ])->whereBetween('created_at', [$from." 00:00:00", $to." 23:59:59"])->where('user_id',$userId)->get()->toArray();
     }
     
     /**
@@ -103,7 +130,7 @@ class ProcessingRepository implements ProcessingRepositoryInterface
     }
     
     
-    public function sumProceesStyles($idPreBill){
+    private function sumProceesStyles($idPreBill){
         $totalQnty = Processing::where([
             ['pre_bill_id','=',$idPreBill],
             ['work_share','=',true]
@@ -121,6 +148,14 @@ class ProcessingRepository implements ProcessingRepositoryInterface
         $total = 0;
         if(sizeof($processingResult) > 0){
             foreach($processingResult as $process){
+                $addWork = null;
+                if(sizeof($process['rel_process_add_work']) > 0){
+                    $work = array();
+                    foreach($process['rel_process_add_work'] as $add){
+                        array_push($work,$add['process_add_work']['name']);
+                    }
+                    $addWork = implode(", ",$work);
+                }
                 $totalProcessing = $totalProcessing + $process['style_total'];
                 array_push($processinResume['resume'],[
                     "idProcess" => $process['id_process'],
@@ -131,7 +166,8 @@ class ProcessingRepository implements ProcessingRepositoryInterface
                     "workShare" => ($process['work_share'] ? "Share" : "No share"),
                     "madeFor" => $process['users']['employee']['names'].' '.$process['users']['employee']['last_names'],
                     "total" => ($process['style_total']*$process['set']),
-                    "q" => 0
+                    "q" => 0,
+                    "addWork" => ($addWork !== null ? $addWork : "No add work")
                 ]);
                 $processinResume['total'] = $processinResume['total'] + ($process['style_total']*$process['set']);
             }
@@ -141,4 +177,75 @@ class ProcessingRepository implements ProcessingRepositoryInterface
         }
         return $processinResume;
     }
+    
+    public function resumeProcessingUserDate($userId,$from,$to){
+        $processingResult = $this->showUserIdDates($userId,$from,$to);
+        return $this->orderDataResume($processingResult);
+    }
+    
+    public function resumeProcessingUser($userId){
+        $processingResult = $this->showUserId($userId);
+        return $this->orderDataResume($processingResult);
+    }
+
+    private function orderDataResume($processingResult,$from = null,$to = null){
+        $costMano = 0.50;
+        $processinResume = array();
+        $processinResume['resume'] = array();
+        $processinResume['total'] = 0;
+        $processinResume['totalCost'] = 0;
+        $processinResume['totalCustomers'] = 0;
+        $processinResume['totalStores'] = 0;
+        $customerArray = array();
+        $storesArray = array();
+        if(sizeof($processingResult) > 0){
+            $processinResume['from'] = Carbon::parse($processingResult[0]['created_at'])->format('M d Y');
+            foreach($processingResult as $process){
+                $addWork = null;
+                if(sizeof($process['rel_process_add_work']) > 0){
+                    $work = array();
+                    $costAddWork = 0;
+                    foreach($process['rel_process_add_work'] as $add){
+                        array_push($work,$add['process_add_work']['name']);
+                        $costAddWork = $costAddWork+$add['process_add_work']['cost'];
+                    }
+                    $addWork = implode(", ",$work);
+                }
+                $totalPieces = $process['style_total']*$process['set'];
+                $totalCost = $this->calculateCostProcessing($process['style_total'],$process['set'], $costMano, $costAddWork);
+                array_push($processinResume['resume'],[
+                    "idProcess" => $process['id_process'],
+                    "styleId" => $process['style_number'],
+                    "styleColor" => ($process['style_color'] == null ? "N/A" : $process['style_color']),
+                    "stylePieces" => $process['style_total'],
+                    "styleSet" => $process['set'].' pieces',
+                    "workShare" => ($process['work_share'] ? "Share" : "No share"),
+                    "total" => $totalPieces,
+                    "addWork" => ($addWork !== null ? $addWork : "No add work"),
+                    "customer" => $process['pre_billing']['receive_details']['boutiques']['costumer']['name'],
+                    "boutique" => $process['pre_billing']['receive_details']['boutiques']['name'],
+                    "store" => $process['pre_billing']['receive_details']['receive']['shipper']['name'],
+                    "cost" => $totalCost,
+                    "date" => Carbon::parse($process['created_at'])->format('M d Y g:i A'),
+                ]);
+                array_push($customerArray,$process['pre_billing']['receive_details']['boutiques']['costumer']['name']);
+                array_push($storesArray,$process['pre_billing']['receive_details']['receive']['shipper']['name']);
+                $processinResume['total'] = $processinResume['total'] + $totalPieces;
+                $processinResume['to'] = Carbon::parse($process['created_at'])->format('M d Y');
+                $processinResume['totalCost'] = $processinResume['totalCost']+$totalCost;
+                 
+            }
+            $processinResume['totalCustomers'] = sizeof(array_count_values($customerArray));
+            $processinResume['totalStores'] = sizeof(array_count_values($storesArray));
+        }
+        return $processinResume;
+
+    }
+    
+    private function calculateCostProcessing($totalPieces,$set,$cost,$costAddWork){
+        $totalPiecesSet = $totalPieces*$set;
+        $totalCost = $cost+$costAddWork;
+        return $totalPiecesSet*$totalCost;
+    }
+    
 }

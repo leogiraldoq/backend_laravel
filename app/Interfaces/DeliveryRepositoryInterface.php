@@ -3,5 +3,6 @@
 namespace App\Interfaces;
 
 interface DeliveryRepositoryInterface {
-    public function create($deliveryData,$userId);
+    public function save($deliveryData,$userId);
+    
 }

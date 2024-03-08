@@ -44,7 +44,7 @@ class ProfilesController extends Controller
                 'name' => 'required|unique:profiles|min:4|max:20',
                 'description' => 'nullable|min:10|max:255',
                 'menuBsp' => 'required|array|min:1',
-                'menuAdmin' => 'nullab|array',
+                'menuAdmin' => 'nullable|array',
                 'modulesPermissions' => 'required|array|min:1',
                 'modulesPermissions.*.id_module' => 'required|integer|min:1',
                 'modulesPermissions.*.create' => 'required|boolean',

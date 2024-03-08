@@ -99,7 +99,8 @@ class SendController extends Controller
 
     public function toDeliveryPerCustumer($idCustomer){
         try {
-            
+            $packingDeliver = $this->packingRepository->toDeliveryPerCustomer($idCustomer);
+            return $this->responseOk("Packs to deliver listed", $packingDeliver);
         } catch (Exception $exc) {
             return $this->responseError($exc->getMessage());
         }

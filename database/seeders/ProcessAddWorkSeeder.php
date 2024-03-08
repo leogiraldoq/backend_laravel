@@ -16,21 +16,27 @@ class ProcessAddWorkSeeder extends Seeder
         DB::table('process_add_work')->insert([
             [
                 "name" => "Prepare Branch",
+                "cost" => 0,
             ],
             [
                 "name" => "Store name hide",
+                "cost" => 0,
             ],
             [
                 "name" => "Carelabel",
+                "cost" => 0,
             ],
             [
                 "name" => "Label prepare",
+                "cost" => 0,
             ],
             [
                 "name" => "Bagging",
+                "cost" => 0,
             ],
             [
                 "name" => "Handtag",
+                "cost" => 0,
             ]
         ]);
     }

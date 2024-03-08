@@ -19,7 +19,9 @@ class Delivery extends Model
         "user_id",
         "photo",
         "signature",
-        "ticket"
+        "ticket",
+        "follow_number",
+        "email"
     ];
     
     public function pick_up_company(): BelongsTo
