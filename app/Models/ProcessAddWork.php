@@ -15,7 +15,7 @@ class ProcessAddWork extends Model
     protected $fillable=[
         "name",
         "cost",
-        "sctive"
+        "active"
     ];
     
     public function rel_process_add_work():HasMany{

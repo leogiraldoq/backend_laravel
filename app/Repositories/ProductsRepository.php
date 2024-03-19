@@ -30,6 +30,7 @@ class ProductsRepository implements ProductsRepositoryInterface {
                     $order['product_name'] = $product['name'];
                     $order['box_dimension'] = $box['dimensions'];
                     $order['box_active'] = $box['active'];
+                    $order['product'] = $product;
                     array_push($listProductBoxes,$order);
                 }                
             } else {
@@ -38,6 +39,7 @@ class ProductsRepository implements ProductsRepositoryInterface {
                 $order['product_name'] = $product['name'];
                 $order['box_dimension'] = "N/A";
                 $order['box_active'] = $product['active'];
+                $order['product'] = $product;
                 array_push($listProductBoxes,$order);
             }
         }

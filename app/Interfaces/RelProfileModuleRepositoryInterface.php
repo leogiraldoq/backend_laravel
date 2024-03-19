@@ -8,4 +8,5 @@ namespace App\Interfaces;
  */
 interface RelProfileModuleRepositoryInterface {
     public function create($idProfile,$newRelProfileModule);
+    public function upsert($idProfile,$dataRelProfileModule);
 }

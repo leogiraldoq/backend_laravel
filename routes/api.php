@@ -20,6 +20,7 @@ use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\QualityController;
 use App\Http\Controllers\SendController;
 use App\Http\Controllers\DeliveryController;
+use App\Http\Controllers\TrackingController;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use App\Events\PreBilling;
@@ -138,6 +139,8 @@ Route::group([
         Route::post('/create',[ProfilesController::class,'create']);
         Route::get('/show/users/module/{moduleName}', [ProfilesController::class,'showUsersModule']);
         Route::get('/menu/me',[ProfilesController::class,'showMenuUsers']);
+        Route::get('/index/{idProfile}',[ProfilesController::class,'index']);
+        Route::post('/update',[ProfilesController::class,'update']);
     }
 );
 
@@ -186,8 +189,10 @@ Route::group([
     ], function(){
         Route::get('/list-all',[ShippersController::class,'listAll']);
         Route::post('/create',[ShippersController::class,'create']);
+        Route::post('/update',[ShippersController::class,'update']);
         Route::get('/list/process-notprocess/{id}',[ShippersController::class,'listProcessNotProcess']);
         Route::get('/verify/process-not/{idCustomer}/{idShipper}',[ShippersController::class,'processOrNot']);
+        Route::get('/change/{status}/{id}',[ShippersController::class,'changeStatus']);
 });
 
 //Products
@@ -258,10 +263,21 @@ Route::group([
         Route::get('/to-deliver/customer/{idCustomer}', [SendController::class,'toDeliveryPerCustumer']);
 });
 
-//Send
+//Delivery
 Route::group([
         'middleware' => 'api',
         'prefix' => 'delivery'        
     ],function(){
         Route::post('/create',[DeliveryController::class,'save']);
+});
+
+//Tracking
+Route::group([
+        'middleware' => 'api',
+        'prefix' => 'track'        
+    ],function(){
+        Route::get('/general',[TrackingController::class,'generalResume']);
+        Route::get('/bill/customer',[TrackingController::class,'resumePreBillProcessCustomer']);
+        Route::get('/bill/boutique/process/prebill/{id}',[TrackingController::class,'detailsPreBillProcessBoutique']);
+        Route::get('/bill/process/users',[TrackingController::class,'processingBillUser']);
 });

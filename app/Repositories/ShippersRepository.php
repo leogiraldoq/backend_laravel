@@ -15,6 +15,9 @@ class ShippersRepository implements ShippersRepositoryInterface{
         return Shippers::all();
     }
     
+    public function index($idShipper){
+        return Shippers::find($idShipper);
+    }
     /**
      * List all shippers
      * @return Model
@@ -35,11 +38,26 @@ class ShippersRepository implements ShippersRepositoryInterface{
      * @param Integer $idCustomer Customer Id
      */
     public function listProcess($idCustomer){
-        error_log(Shippers::whereDoesntHave('customer_not_process',function($query) use ($idCustomer){
-            $query->where('customer_id',$idCustomer);
-        })->where('active',true)->toSql());
         return Shippers::whereDoesntHave('customer_not_process',function($query) use ($idCustomer){
             $query->where('customer_id',$idCustomer);
         })->where('active',true)->get()->toArray();
+    }
+    
+    public function update($shipper){
+        $storeUpdate = Shippers::where('id_shipper',$shipper['id'])->update([
+            'name' => $shipper['name'],
+            'contact_name' => $shipper['contactName'],
+            'contact_number' => $shipper['contactNumber'],
+            'email' => $shipper['email'],
+        ]);
+        
+        return $this->index($shipper['id']);
+    }
+    
+    public function changeStatus($idShipper,$status){
+        $storeUpdate = Shippers::where('id_shipper',$idShipper)->update([
+            'active' => $status
+        ]);
+        return $this->index($idShipper);
     }
 }

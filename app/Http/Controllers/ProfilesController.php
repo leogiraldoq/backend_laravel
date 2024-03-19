@@ -58,7 +58,6 @@ class ProfilesController extends Controller
             return $this->responseError($exc->getMessage());
         }
     }
- 
     
     public function showUsersModule($module){
         try {
@@ -74,6 +73,37 @@ class ProfilesController extends Controller
             $menu = $this->profileRepository->showMenuUser((auth()->user())->id_user);
             return $this->responseOk("Return menu", $menu);
         } catch (Exception $exc) {
+            return $this->responseError($exc->getMessage());
+        }
+    }
+    
+    public function index($idProfile){
+        try {
+            $profile = $this->profileRepository->index($idProfile);
+            return $this->responseOk("Profile ".$profile['name']." returned", $profile);
+        } catch (Exception $exc) {
+            return $this->responseError($exc->getMessage());
+        }
+    }
+    
+    public function update(Request $request){
+        try {
+            $validated = $request->validate([
+                'id_profile' => 'required|integer',
+                'name' => 'required|min:4|max:20',
+                'description' => 'nullable|min:10|max:255',
+                'menuBsp' => 'required|array|min:1',
+                'menuAdmin' => 'nullable|array',
+                'modulesPermissions' => 'required|array|min:1',
+                'modulesPermissions.*.id_module' => 'required|integer|min:1',
+                'modulesPermissions.*.create' => 'required|boolean',
+                'modulesPermissions.*.read' => 'required|boolean',
+                'modulesPermissions.*.update' => 'required|boolean',
+                'modulesPermissions.*.erase' => 'required|boolean',
+            ]);
+            $updateProfiles = $this->profileRepository->update($validated);
+            return $this->responseOk("Profile <b>".$validated['name']."</b> was update.",$updateProfiles);
+        } catch (\Exception $exc) {
             return $this->responseError($exc->getMessage());
         }
     }

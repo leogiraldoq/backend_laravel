@@ -18,7 +18,9 @@ class Boutiques extends Model
         'name',
         'address',
         'city',
-        'final_destination'
+        'final_destination',
+        'zip_address',
+        'zip_final'
     ];
 
     public function costumer():BelongsTo

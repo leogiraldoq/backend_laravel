@@ -33,6 +33,7 @@ use App\Interfaces\QrCodesRepositoryInterface;
 use App\Interfaces\PackingRepositoryInterface;
 use App\Interfaces\RelPackStoreRepositoryInterface;
 use App\Interfaces\DeliveryRepositoryInterface;
+use App\Interfaces\TrackingRepositoryInterface;
 
 use \App\Repositories\ProfilesRepository;
 use App\Repositories\RelCostumerInstructionsRepository;
@@ -65,6 +66,7 @@ use App\Repositories\QrCodeRepository;
 use App\Repositories\PackingRepository;
 use App\Repositories\RelPackStoreRepository;
 use App\Repositories\DeliveryRepository;
+use App\Repositories\TrackingRepository;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -106,6 +108,7 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(PackingRepositoryInterface::class, PackingRepository::class);
         $this->app->bind(RelPackStoreRepositoryInterface::class, RelPackStoreRepository::class);
         $this->app->bind(DeliveryRepositoryInterface::class, DeliveryRepository::class);
+        $this->app->bind(TrackingRepositoryInterface::class, TrackingRepository::class);
     }
 
     /**

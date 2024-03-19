@@ -89,7 +89,7 @@ class ProcessingRepository implements ProcessingRepositoryInterface
             'pre_billing.receive_details.receive.shipper',
             'rel_process_add_work',
             'rel_process_add_work.process_add_work'
-        ])->whereBetween('created_at', [$from." 00:00:00", $to." 23:59:59"])->where('user_id',$userId)->get()->toArray();
+        ])->whereBetween('created_at', [$from, $to])->where('user_id',$userId)->get()->toArray();
     }
     
     /**
@@ -179,7 +179,7 @@ class ProcessingRepository implements ProcessingRepositoryInterface
     }
     
     public function resumeProcessingUserDate($userId,$from,$to){
-        $processingResult = $this->showUserIdDates($userId,$from,$to);
+        $processingResult = $this->showUserIdDates($userId,$from." 00:00:00", $to." 23:59:59");
         return $this->orderDataResume($processingResult);
     }
     
@@ -188,7 +188,7 @@ class ProcessingRepository implements ProcessingRepositoryInterface
         return $this->orderDataResume($processingResult);
     }
 
-    private function orderDataResume($processingResult,$from = null,$to = null){
+    private function orderDataResume($processingResult){
         $costMano = 0.50;
         $processinResume = array();
         $processinResume['resume'] = array();

@@ -54,11 +54,37 @@ class ShippersController extends Controller
                 'email' => 'nullable|email|min:10|max:250'
             ]);
             $shop = $this->shipperRepository->create($validateShop);
-            return $this->responseOk("Shop ".$shop['name']." create", $shop);
+            return $this->responseOk("Shop <b>".$shop['name']."<`/b> create", $shop);
         } catch (\Exception $ex) {
             return $this->responseError($ex->getMessage());
         }
     }
+    
+    public function update(Request $shipper){
+        try{
+            $validateShop = $shipper->validate([
+                'id' => 'required|integer',
+                'name' => 'required|string|min:2|max:250',
+                'contactName' => 'nullable|min:5|max:250',
+                'contactNumber' => 'nullable|min:5|max:250',
+                'email' => 'nullable|email|min:10|max:250'
+            ]);
+            $shop = $this->shipperRepository->update($validateShop);
+            return $this->responseOk("Shop <b>".$shop['name']."</b> was update", $shop);
+        } catch (\Exception $ex) {
+            return $this->responseError($ex->getMessage());
+        }
+    }
+    
+    public function changeStatus($status,$idStore){
+        try{
+            $shop = $this->shipperRepository->changeStatus($idStore, $status);
+            return $this->responseOk("Shop <b>".$shop['name']."</b> changed", $shop);
+        } catch (Exception $ex) {
+            return $this->responseError($ex->getMessage());
+        }
+    }
+    
     
     /**
      * List shippers that will not be not process and shippers that will be not process per customer

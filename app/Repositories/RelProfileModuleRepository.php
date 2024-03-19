@@ -45,4 +45,14 @@ class RelProfileModuleRepository implements RelProfileModuleRepositoryInterface{
     public function listPerProfile($idProfile){
         return RelProfileModule::where('profile_id',$idProfile)->get()->toArray();
     }
+    
+    public function upsert($idProfile,$dataRelProfileModule){
+        foreach($dataRelProfileModule as $key => $value){
+            RelProfileModule::updateOrCreate(
+                ['profile_id' => $idProfile, 'module_id' => $value['id_module']],
+                ['read' => $value['read'], 'create' => $value['create'], 'update' => $value['update'], 'delete' => $value['erase']]
+            );
+        }
+        return $this->listPerProfile($idProfile);
+    }
 }

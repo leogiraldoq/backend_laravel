@@ -3,13 +3,9 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/leogiraldoq/Documents/BlueStarPacking/backend_laravel/app/Models/Delivery.php</file>
-            <file>file:/home/leogiraldoq/Documents/BlueStarPacking/backend_laravel/app/Interfaces/DeliveryRepositoryInterface.php</file>
-            <file>file:/home/leogiraldoq/Documents/BlueStarPacking/backend_laravel/database/migrations/2024_02_28_190832_create_delivery.php</file>
-            <file>file:/home/leogiraldoq/Documents/BlueStarPacking/backend_laravel/app/Repositories/DeliveryRepository.php</file>
-            <file>file:/home/leogiraldoq/Documents/BlueStarPacking/backend_laravel/routes/api.php</file>
-            <file>file:/home/leogiraldoq/Documents/BlueStarPacking/backend_laravel/app/Http/Controllers/DeliveryController.php</file>
-            <file>file:/home/leogiraldoq/Documents/BlueStarPacking/backend_laravel/database/migrations/2024_03_08_003852_add_columns_delivery.php</file>
+            <file>file:/home/leogiraldoq/Documents/BlueStarPacking/backend_laravel/app/Repositories/TrackingRepository.php</file>
+            <file>file:/home/leogiraldoq/Documents/BlueStarPacking/backend_laravel/app/Repositories/QrCodeRepository.php</file>
+            <file>file:/home/leogiraldoq/Documents/BlueStarPacking/backend_laravel/app/Http/Controllers/TrackingController.php</file>
         </group>
     </open-files>
 </project-private>

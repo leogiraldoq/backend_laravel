@@ -52,7 +52,10 @@ class BoutiqueRepository implements BoutiqueRepositoryInterface{
             'name' => $newBoutique['name'],
             'address' => $newBoutique['address'],
             'city' => $newBoutique['city'],
-            'final_destination' => $newBoutique['final_destination']
+            'final_destination' => $newBoutique['final_destination'],
+            'zip_address' => $newBoutique['zipAddress'],
+            'zip_final' => $newBoutique['zipFinal'],
+
         ]);
     }
 
